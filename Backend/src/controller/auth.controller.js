@@ -3,6 +3,7 @@ const userModel = require('../models/user.model')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const emailService = require('../services/email.service')
+const tokenBlackListModel = require('../models/blackList.token.model')
 
 /**
  *  - User Registration Controller
@@ -108,12 +109,7 @@ async function loginUser(req, res, next) {
         }, process.env.JWT_SECRET, { expiresIn: "3d" })
 
         // Secure cookies
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        })
-
+        res.cookie("token", token, { httpOnly: true }) 
         return res.status(200).json({
             message: "User logged-in successfully",
             user: {
@@ -132,13 +128,19 @@ async function loginUser(req, res, next) {
  *  - User Logout Controller
  *  - Post /api/auth/logout
  */
-async function logoutUser(req, res, next) {
-    try {
-        res.clearCookie("token")
-        return res.status(200).json({ message: "User logged out successfully" })
-    } catch (error) {
-        next(error)
+async function logoutUser(req, res) {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+    // here why 
+    if(!token){
+        return res.status(400).json({
+            message: "Token Not Found"
+        })
     }
+    res.cookie("token", "")
+    await tokenBlackListModel.create({ token })  
+    return res.status(200).json({
+        message: "User logged out successfully"
+    })
 }
 
 module.exports = { registerUser, loginUser, logoutUser }

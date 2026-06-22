@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const config = require('../config/config')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -22,14 +23,14 @@ transporter.verify((error, success) => {
 
 
 // Function to send email
-const sendEmail = async (to, subject, text, html) => {
+async function sendEmail(to, subject, text, html) {
   try {
     const info = await transporter.sendMail({
-      from: `"Banking System" <${process.env.EMAIL_USER}>`, // sender address
-      to, // list of receivers
-      subject, // Subject line
-      text, // plain text body
-      html, // html body
+      from: `"Nexora" <${config.EMAIL_USER}>`,
+      to, 
+      subject, 
+      text, 
+      html, 
     });
 
     console.log('Message sent: %s', info.messageId);
@@ -37,15 +38,14 @@ const sendEmail = async (to, subject, text, html) => {
   } catch (error) {
     console.error('Error sending email:', error);
   }
-};
-
+}
 async function sendRegistrationEmail(userEmail, name) {
-  const subject = "Welcome to Banking System - Account Registration Successful";
+  const subject = "Welcome to Nexora - Account Registration Successful";
 
   const text = `
 Dear ${name},
 
-Welcome to Banking System.
+Welcome to Nexora.
 
 Your account has been successfully registered and is now ready to use.
 
@@ -54,24 +54,24 @@ For your security:
 • Always verify the website before logging in.
 • Contact support immediately if you notice suspicious activity.
 
-Thank you for choosing Banking System.
+Thank you for choosing Nexora.
 
 Regards,
-Banking System Team
+Nexora Team
 `;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
         
         <div style="background: #1e40af; color: white; padding: 20px; text-align: center;">
-            <h2>🏦 Banking System</h2>
+            <h2>🏦 Nexora</h2>
         </div>
 
         <div style="padding: 25px;">
             <h3>Hello ${name},</h3>
 
             <p>
-                Welcome to <strong>Banking System</strong>.
+                Welcome to <strong>Nexora</strong>.
                 Your account has been successfully registered and is now ready to use.
             </p>
 
@@ -90,12 +90,12 @@ Banking System Team
 
             <p>
                 Regards,<br>
-                <strong>Banking System Team</strong>
+                <strong>Nexora Team</strong>
             </p>
         </div>
 
         <div style="background: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #6b7280;">
-            © 2026 Banking System. All Rights Reserved.<br>
+            © 2026 Nexora. All Rights Reserved.<br>
             This is an automated email. Please do not reply.
         </div>
 
@@ -229,17 +229,17 @@ Thank you for banking with us.
 
 async function sendTransactionFailureEmail(userEmail, name, amount, toAccount, transactionDetails) {
   const subject = "Transaction Failure Notification";
-  const text = `Hi ${name},\n\nWe regret to inform you that a transaction of $${amount} to account ${toAccount} has failed.\n\nTransaction Details:\n${transactionDetails}\n\nPlease check your account and try again. If you have any questions, feel free to contact our support team.\n\nBest regards,\nBanking System Team`;
-  const html = `<p>Hi ${name},</p><p>We regret to inform you that a transaction of <strong>$${amount}</strong> to account <strong>${toAccount}</strong> has failed.</p><p><strong>Transaction Details:</strong></p><pre>${transactionDetails}</pre><p>Please check your account and try again. If you have any questions, feel free to contact our support team.</p><p>Best regards,<br/>Banking System Team</p>`;
+  const text = `Hi ${name},\n\nWe regret to inform you that a transaction of $${amount} to account ${toAccount} has failed.\n\nTransaction Details:\n${transactionDetails}\n\nPlease check your account and try again. If you have any questions, feel free to contact our support team.\n\nBest regards,\nNexora Team`;
+  const html = `<p>Hi ${name},</p><p>We regret to inform you that a transaction of <strong>$${amount}</strong> to account <strong>${toAccount}</strong> has failed.</p><p><strong>Transaction Details:</strong></p><pre>${transactionDetails}</pre><p>Please check your account and try again. If you have any questions, feel free to contact our support team.</p><p>Best regards,<br/>Nexora Team</p>`;
   await sendEmail(userEmail, subject, text, html);
 }
 
 async function sendPasswordResetEmail(userEmail, name, resetLink) {
   const subject = "Password Reset Request";
-  const text = `Hi ${name},\n\nWe received a request to reset your password. Please click the link below to reset your password:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nBanking System Team`;
-  const html = `<p>Hi ${name},</p><p>We received a request to reset your password. Please click the link below to reset your password:</p><p><a href="${resetLink}">Reset Password</a></p><p>If you did not request a password reset, please ignore this email.</p><p>Best regards,<br/>Banking System Team</p>`;
+  const text = `Hi ${name},\n\nWe received a request to reset your password. Please click the link below to reset your password:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nNexora Team`;
+  const html = `<p>Hi ${name},</p><p>We received a request to reset your password. Please click the link below to reset your password:</p><p><a href="${resetLink}">Reset Password</a></p><p>If you did not request a password reset, please ignore this email.</p><p>Best regards,<br/>Nexora Team</p>`;
   await sendEmail(userEmail, subject, text, html);
 }
 
 
-module.exports = { sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };
+module.exports = {sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };

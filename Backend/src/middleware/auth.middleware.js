@@ -1,4 +1,5 @@
 const userModel = require('../models/user.model')
+const  config  = require('../config/config')
 const jwt = require('jsonwebtoken')
 
 
@@ -12,7 +13,7 @@ async function authmiddleware(req, res, next) {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, config.JWT_SECRET)
         const user = await userModel.findById(decoded.userid)
 
         if (!user) {
@@ -43,7 +44,7 @@ async function authSystemUserMiddleware(req, res, next) {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, config.JWT_SECRET)
         const user = await userModel.findById(decoded.userid).select("+systemUser")
         if (!user.systemUser) {
             return res.status(403).json({

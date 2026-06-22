@@ -17,7 +17,7 @@ const ledgerSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: [true, "Ledger entry must have an amount"],
-        immutable: true, // 
+        immutable: true, 
     },
     transaction: {
         type: mongoose.Schema.Types.ObjectId,

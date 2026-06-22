@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
         select: false,
     },
 
+        verified:{
+        type: Boolean,
+        default: false
+    },
+
     systemUser: {
         type: Boolean,
         default: false,

@@ -9,6 +9,18 @@ const accountSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+
+    accountType: {
+        type: String,
+        enum: ["Savings", "Current"],
+        default: "Savings"
+    },
+
+    nickname: {
+        type: String,
+        default: ""
+    },
+    
     status: {
         type: String,
         enum: {
@@ -71,11 +83,9 @@ accountSchema.methods.getBalance = async function () {
     ])
 
     // If there are no ledger entries, balance is 0
-    if(balanceData.length === 0){
+    if (balanceData.length === 0) {
         return 0;
     }
-
-    // Return calculated balance
     return balanceData[0].balance;
 }
 

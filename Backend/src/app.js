@@ -1,11 +1,16 @@
 const express = require('express');
+const morgan = require('morgan')
 const authRouter = require("./routes/auth.routes")
 const accountRouter = require("./routes/account.routes")
 const transactionRoutes = require('./routes/transaction.routes')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
+
 const app = express();
 
+app.use(cors())
 app.use(express.json());
+app.use(morgan("dev")) 
 app.use(cookieParser())
 
 /**
@@ -20,7 +25,7 @@ app.get('/', (req, res)=>{
 })
 
 // Global Error Handler
-// A simple safety net for any errors
+
 app.use((err, req, res, next) => {
     console.error(err); 
     res.status(500).json({ message: err.message || "Something went wrong!" });

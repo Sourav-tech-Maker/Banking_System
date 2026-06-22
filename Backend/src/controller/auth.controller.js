@@ -47,12 +47,24 @@ async function registerUser(req, res, next) {
             role
         })
 
+        
+        const otp = generateOtp();
+        const hashedOtp = hashToken(otp);
+
+        await otpModel.create({
+            email,
+            otp: hashedOtp,
+        });
+
+        const html = getOtpHtml(otp);
+        const text = getOtpText(otp);
+        await sendEmail(email, "Verify Your Email", text, html);
    
       //token created
         const token = jwt.sign({
             userid: user._id,
             role: user.role,
-        }, process.env.JWT_SECRET, { expiresIn: "3d" })
+        }, config.JWT_SECRET, { expiresIn: "3d" })
 
         // Secure cookies
         res.cookie("token", token)
@@ -67,12 +79,60 @@ async function registerUser(req, res, next) {
             }
         })
 
-        await emailService.sendRegistrationEmail(user.email, user.username)
+        // await emailService.sendRegistrationEmail(user.email, user.username)
 
     } catch (error) {
         next(error)
     }
 
+}
+
+
+async function verifyOtp(req, res) {
+    try {
+        const { email, otp } = req.body || {};
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required",
+            });
+        }
+
+        const hashedOtp = hashToken(otp);
+
+        const otpRecord = await otpModel.findOne({
+            email,
+            otp: hashedOtp,
+            verified: false,
+        });
+
+        if (!otpRecord) {
+            return res.status(400).json({
+                message: "Invalid or expired OTP",
+            });
+        }
+
+
+        if (otpRecord.expiresAt < new Date()) {
+            return res.status(400).json({
+                message: "OTP has expired. Please request a new one.",
+            });
+        }
+        otpRecord.verified = true;
+        await otpRecord.save();
+
+        await userModel.findOneAndUpdate(
+            { email },
+            { verified: true }
+        );
+
+        res.status(200).json({
+            message: "Email verified successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
 }
 
 /**

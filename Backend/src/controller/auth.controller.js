@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const userModel = require('../models/user.model')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-const emailService = require('../services/email.service')
+const {sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
 const tokenBlackListModel = require('../models/blackList.token.model')
 
 /**

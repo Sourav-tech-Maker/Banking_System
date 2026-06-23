@@ -20,7 +20,7 @@ const accountSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    
+
     status: {
         type: String,
         enum: {
@@ -35,6 +35,11 @@ const accountSchema = new mongoose.Schema({
         default: "INR"
     },
 
+    isKycVerified: {
+        type: Boolean,
+        default: false
+    },
+
     systemUser: {
         type: Boolean,
         default: false
@@ -47,6 +52,7 @@ const accountSchema = new mongoose.Schema({
 accountSchema.index({ user: 1, status: 1 }) // compound index
 accountSchema.methods.getBalance = async function () {
 
+    const ledgerModel = require('./ledger.model')
     // Calculate balance by aggregating ledger entries
     const balanceData = await ledgerModel.aggregate([
         { $match: { account: this._id } },

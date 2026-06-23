@@ -3,6 +3,7 @@ const ledgerModel = require('../models/ledger.model')
 const emailService = require('../services/email.service')
 const accountModel = require('../models/account.model')
 const transactionModel = require('../models/transaction.model')
+const KycModel = require('../models/kyc.models')
 const jwt = require('jsonwebtoken')
 /**
  * - Create a new Transcation
@@ -23,6 +24,13 @@ async function createTransaction(req, res, next) {
      * 1. Validate request
      */
     const { FromAccount, toAccount, amount, idempotencyKey } = req.body
+
+    if(accountModel.isKycVerified === false || KycModel.status != 'Approve'){
+        return res.status(403).json({
+            message: "You don't have access to creating Transaction",
+            status: 'failed'
+        })
+    }
 
     if (!FromAccount || !toAccount || !amount || !idempotencyKey) {
         return res.status(400).json({

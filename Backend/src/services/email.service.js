@@ -22,6 +22,8 @@ transporter.verify((error, success) => {
 });
 
 
+
+
 // Function to send email
 async function sendEmail(to, subject, text, html) {
   try {

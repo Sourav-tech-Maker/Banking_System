@@ -1,9 +1,13 @@
 const mongoose = require('mongoose')
 const userModel = require('../models/user.model')
+const sessionModel = require('../models/session.model')
+const config = require('../config/config')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-const {sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
+const { sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
 const tokenBlackListModel = require('../models/blackList.token.model')
+
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
 /**
  *  - User Registration Controller
@@ -47,7 +51,7 @@ async function registerUser(req, res, next) {
             role
         })
 
-        
+
         const otp = generateOtp();
         const hashedOtp = hashToken(otp);
 
@@ -59,8 +63,8 @@ async function registerUser(req, res, next) {
         const html = getOtpHtml(otp);
         const text = getOtpText(otp);
         await sendEmail(email, "Verify Your Email", text, html);
-   
-      //token created
+
+
         const token = jwt.sign({
             userid: user._id,
             role: user.role,
@@ -163,13 +167,30 @@ async function loginUser(req, res, next) {
             })
         }
 
-        const token = jwt.sign({
+        const accessToken = jwt.sign({
             userid: user._id,
             role: user.role,
-        }, process.env.JWT_SECRET, { expiresIn: "3d" })
+        }, config.JWT_SECRET, { expiresIn: "15m" })
 
+        const refreshToken = jwt.sign({
+            userid: user._id
+        }, config.JWT_SECRET, { expiresIn: "7d" })
+
+        const hashedRefreshToken = hashToken(refreshToken)
+        const sessionExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+        await sessionModel.create({
+            user: user._id,
+            refreshTokenHash: hashedRefreshToken,
+            userAgent: req.headers['user-agent'] || "Unknown Device",
+            expiresAt: sessionExpiry
+        })
         // Secure cookies
-        res.cookie("token", token, { httpOnly: true }) 
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
         return res.status(200).json({
             message: "User logged-in successfully",
             user: {
@@ -177,7 +198,8 @@ async function loginUser(req, res, next) {
                 username: user.username,
                 email: user.email,
                 role: user.role
-            }
+            },
+            accessToken
         })
     } catch (error) {
         next(error)
@@ -189,18 +211,37 @@ async function loginUser(req, res, next) {
  *  - Post /api/auth/logout
  */
 async function logoutUser(req, res) {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
-    // here why 
-    if(!token){
-        return res.status(400).json({
-            message: "Token Not Found"
+
+    try {
+        const refreshToken = req.cookies.refreshToken
+        if (!refreshToken) {
+            return res.status(400).json({
+                message: "Token Not Found"
+            })
+        }
+        const hashedRefreshToken = hashToken(refreshToken)
+        await sessionModel.findOneAndUpdate(
+            {refreshTokenHash: hashedRefreshToken, revoked: false},
+            {
+                revoked: true,
+                revokedAt: new Date()
+            }
+        )
+
+        const accessToken = req.cookies.token || req.headers.authorization?.spilt("")[1]
+        if(accessToken){
+            await tokenBlackListModel.create({token: accessToken})
+        }
+
+        res.clearCookie("refreshToken"),
+        res.clearCookie("token")
+
+        return res.status(200).json({
+            message: "User logged out successfully"
         })
+    } catch (error) {
+        next(error)
     }
-    res.cookie("token", "")
-    await tokenBlackListModel.create({ token })  
-    return res.status(200).json({
-        message: "User logged out successfully"
-    })
 }
 
 module.exports = { registerUser, loginUser, logoutUser }

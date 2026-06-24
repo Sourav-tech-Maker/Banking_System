@@ -35,6 +35,12 @@ const accountSchema = new mongoose.Schema({
         default: "INR"
     },
 
+    kyc: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "KYC",
+        default: null
+    },
+
     isKycVerified: {
         type: Boolean,
         default: false

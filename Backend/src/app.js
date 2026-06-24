@@ -4,6 +4,7 @@ const authRouter = require("./routes/auth.routes")
 const accountRouter = require("./routes/account.routes")
 const transactionRoutes = require('./routes/transaction.routes')
 const beneficiaryRoutes = require('./routes/beneficiary.route')
+const KycRoutes = require('./routes/Kyc.routes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -21,6 +22,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/account', accountRouter)
 app.use('/api/transaction', transactionRoutes)
 app.use('/api/beneficiary', beneficiaryRoutes )
+app.use('/api/Kyc', KycRoutes)
 
 app.get('/', (req, res)=>{
     res.send("Welcome to Banking System API");

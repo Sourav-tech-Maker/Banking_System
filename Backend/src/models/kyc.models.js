@@ -56,24 +56,25 @@ const kycSchema = new mongoose.Schema({
             trim: true
         }
     },
-    
-    documentType: {
-        type: String,
-        enum: {
-            values: ['Passport', 'Aadhar-card', 'Driver License', 'Pan-Card'],
-            message: "Invalid document type"
+    documentDetails: {
+        documentType: {
+            type: String,
+            enum: {
+                values: ['Passport', 'Aadhar-card', 'Driver License', 'Pan-Card'],
+                message: "Invalid document type"
+            },
+            required: [true, "Document type is required"]
         },
-        required: [true, "Document type is required"]
-    },
-    documentNumber: {
-        type: String,
-        required: [true, "Document Id is required"],
-        unique: true,
-        trim: true
-    },
-    documentImg: {
-        type: String,
-        required: [true, "Document image upload is required"]
+        documentNumber: {
+            type: String,
+            required: [true, "Document Id is required"],
+            unique: true,
+            trim: true
+        },
+        documentImg: {
+            type: String,
+            required: [true, "Document image upload is required"]
+        },
     },
 
     status: {
@@ -85,6 +86,7 @@ const kycSchema = new mongoose.Schema({
         default: 'Pending',
         index: true
     },
+
     rejectReason: {
         type: String,
         trim: true,
@@ -111,8 +113,5 @@ const kycSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 kycSchema.index({ userId: 1, status: 1 })
-// Prevents two users from submitting the exact same document ID number
-kycSchema.index({ "documentDetails.documentNumber": 1 }, { unique: true})
-
 const kycModel = mongoose.model("KYC", kycSchema)
 module.exports = kycModel

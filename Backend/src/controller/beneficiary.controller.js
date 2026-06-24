@@ -5,8 +5,8 @@ const { sendEmail } = require('../services/email.service');
 const { generateOtp, getOtpHtml, getOtpText} = require('../Utils/otp.utils')
 
 // const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP string
-const getOtpText = (otp) => `Your verification code to add a beneficiary is: ${otp}`;
-const getOtpHtml = (otp) => `<h3>Beneficiary Verification</h3><p>Your code is: <strong>${otp}</strong></p>`;
+// const getOtpText = (otp) => `Your verification code to add a beneficiary is: ${otp}`;
+// const getOtpHtml = (otp) => `<h3>Beneficiary Verification</h3><p>Your code is: <strong>${otp}</strong></p>`;
 
 async function addBeneficiaries(req, res) {
     try {

@@ -5,15 +5,15 @@ const authRouter = express.Router();
 /**
  * POST /api/beneficiary/add-beneficiary
  */
-authRouter.post('/add-beneficiary', beneficiary.addbeneficiaries)
+authRouter.post('/add-beneficiary', beneficiary.addBeneficiaries)
 /**
  * POST /api/beneficiary/:id
  */
-authRouter.post('/:id', beneficiary.verifyBeneficiary)
+authRouter.post('/verify', beneficiary.verifyBeneficiary)
 /**
- * POST /api/beneficiary/get-beneficiary
+ * GET /api/beneficiary/get-beneficiary
  */
-authRouter.get('/get-beneficiary', beneficiary.getBeneficiaries)
+authRouter.get('/get-beneficiary/:userId', beneficiary.getBeneficiaries)
 
 
 module.exports = authRouter

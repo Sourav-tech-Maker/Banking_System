@@ -1,49 +1,55 @@
 const mongoose = require('mongoose')
 const accountModel = require('../models/account.model')
 const kycModel = require('../models/kyc.models')
+const Kyc = require('../controller/Kyc.controller')
 const bcrypt = require('bcryptjs')
 const JWT = require('jsonwebtoken')
 
 
-async function createAccountController(req, res, next) {
+async function createAccount(req, res, next) {
     try {
         const user = req.user
-        const KycRecord = await kycModel.findOne({
-            userId: user._id
-        })
+        const KycRecord = await kycModel.findOne({ UserId: user._id })
 
         if (!KycRecord) {
             return res.status(403).json({
-                message: "Access Denied. You must submit your KYC documents before opening an account."
-            })
+              message: "Account creation blocked. You must submit your KYC details first.",
+                status: "failed"
+             })
         }
 
-        if (KycRecord.status != 'Approve') {
+       if (KycRecord.status !== 'Approve') {
+
             if (KycRecord.status === 'Rejected') {
                 return res.status(403).json({
-                    message: "KYC Status MUST be APPROVE for Open ACCOUNT",
-                    reason: kycRecord.rejectReason
-                })
+                    message: "Account creation blocked. Your KYC application was rejected.",
+                    reason: KycRecord.rejectReason, 
+                    status: "failed"
+                });
             }
 
             return res.status(403).json({
-                message: "KYC Status MUST be APPROVE for Open ACCOUNT",
-                reason: "Your documents are still under verification."
-            })
+                message: "Account creation blocked. Your KYC verification is currently pending admin approval.",
+                status: "failed"
+            });
         }
+
         const account = await accountModel.create({
-            user: user._id
+            user: user._id,
+            isKycVerified: true
         })
 
-        res.status(201).json({
+      return res.status(201).json({
+            message: "Bank account created successfully.",
+            status: "success",
             account
-        })
+        });
     } catch (error) {
         next(error)
     }
 }
 
-async function getAccountDetailsController(req, res, next) {
+async function getAccountDetails(req, res, next) {
 
     try {                       
         const accounts = await accountModel.find({ user: req.user._id })
@@ -55,7 +61,7 @@ async function getAccountDetailsController(req, res, next) {
     }
 }
 
-async function getAccountBalanceController(req, res, next) {
+async function getAccountBalance(req, res, next) {
     try {
     const { accountId } = req.params
 
@@ -81,7 +87,7 @@ async function getAccountBalanceController(req, res, next) {
 }
 
 module.exports = {
-    createAccountController,
-    getAccountDetailsController,
-    getAccountBalanceController
+    createAccount,
+    getAccountDetails,
+    getAccountBalance
 }

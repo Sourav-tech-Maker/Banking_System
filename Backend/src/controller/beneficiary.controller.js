@@ -2,12 +2,11 @@ const mongoose = require('mongoose');
 const beneficiaryModel = require('../models/beneficiary.model');
 const accountModel = require('../models/account.model');
 const { sendEmail } = require('../services/email.service');
-const { generateOtp, getOtpHtml, getOtpText} = require('../Utils/otp.utils')
+const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
 
 async function addBeneficiaries(req, res) {
     try {
-        const { fullName, nickName, accountId, email } = req.body || {}; 
-        const userId = req.user.id;
+        const { userId, fullName, nickName, accountId, email } = req.body || {};
 
         if (!userId || !fullName || !nickName || !accountId || !email) {
             return res.status(400).json({
@@ -17,7 +16,7 @@ async function addBeneficiaries(req, res) {
         }
 
         const targetAccount = await accountModel.findById(accountId);
-        if (!targetAccount){
+        if (!targetAccount) {
             return res.status(404).json({
                 message: "The beneficiary account does not exist.",
                 status: "failed"
@@ -54,19 +53,20 @@ async function addBeneficiaries(req, res) {
         }
 
         const otp = generateOtp();
-        const otpExpires = new Date(Date.now() + 5 * 60 * 1000); 
+        await beneficiary.save();
+        const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
 
-        
+
         const beneficiary = await beneficiaryModel.create({
             userId,
             fullName,
             nickName,
             accountId,
-            otp, 
+            otp,
             otpExpires,
             isVerified: false
         });
-        
+
         const html = getOtpHtml(otp);
         const text = getOtpText(otp);
         await sendEmail(email, "Verify Your Beneficiary Setup", text, html);
@@ -82,15 +82,15 @@ async function addBeneficiaries(req, res) {
     } catch (error) {
         console.error("Error adding beneficiary:", error);
         return res.status(500).json({
-            status: "error",
-            message: "Internal server error"
+            message: "Internal server error",
+            status: "error"
         });
     }
 }
 
 async function verifyBeneficiary(req, res) {
     try {
-        const { beneficiaryId, otp } = req.body; 
+        const { beneficiaryId, otp } = req.body;
 
         if (!beneficiaryId || !otp) {
             return res.status(400).json({
@@ -98,7 +98,7 @@ async function verifyBeneficiary(req, res) {
             });
         }
 
-        
+
         const beneficiary = await beneficiaryModel.findById(beneficiaryId);
 
         if (!beneficiary) {
@@ -107,23 +107,24 @@ async function verifyBeneficiary(req, res) {
             });
         }
 
-       
+        console.log("Stored OTP:", beneficiary.otp, typeof beneficiary.otp);
+        console.log("Received OTP:", otp, typeof otp);
         if (beneficiary.otp !== otp) {
             return res.status(400).json({
                 message: "Invalid OTP code provided."
             });
         }
 
-        
+
         if (new Date() > beneficiary.otpExpires) {
             return res.status(400).json({
                 message: "OTP has expired. Please re-initiate beneficiary setup."
             });
         }
 
-        
+
         beneficiary.isVerified = true;
-        beneficiary.otp = null; 
+        beneficiary.otp = null;
         beneficiary.otpExpires = null;
 
         await beneficiary.save();
@@ -148,10 +149,10 @@ async function getBeneficiaries(req, res) {
                 status: "failed"
             });
         }
-        
+
         const beneficiariesList = await beneficiaryModel.find({ userId, isVerified: true }).populate({
-            path: 'accountId', 
-            select: 'accountType status currency' 
+            path: 'accountId',
+            select: 'accountType status currency'
         });
 
         return res.status(200).json({

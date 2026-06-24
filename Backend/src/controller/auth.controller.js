@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const crypto = require('crypto')
 const userModel = require('../models/user.model')
 const sessionModel = require('../models/session.model')
 const config = require('../config/config')
@@ -182,6 +183,7 @@ async function loginUser(req, res, next) {
         await sessionModel.create({
             user: user._id,
             refreshTokenHash: hashedRefreshToken,
+            ip: req.ip || req.headers['x-forwarded-for'] || "127.0.0.1",
             userAgent: req.headers['user-agent'] || "Unknown Device",
             expiresAt: sessionExpiry
         })

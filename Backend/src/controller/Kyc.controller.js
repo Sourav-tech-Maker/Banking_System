@@ -16,7 +16,7 @@ async function registerKyc(req, res, next) {
             })
         }
         const user = req.body
-        const fetchDetails = await userModel.findOne({ userId: userId })
+        const fetchDetails = await userModel.findOne({ user: user._id })
 
         if (!fetchDetails) {
             return res.status(404).json({
@@ -46,7 +46,8 @@ async function registerKyc(req, res, next) {
             dateOfBirth,
             gender,
             permanentAddress,
-            documentDetails
+            documentDetails,
+            status: "Pending"
         })
 
         fetchDetails.kyc = Kyc._id

@@ -29,14 +29,15 @@ async function createAccount(req, res, next) {
             }
 
             return res.status(403).json({
-                message: "Account creation blocked. Your KYC verification is currently pending admin approval.",
+                message: "Account creation blocked. Your KYC verification is currently pending by admin  approval.",
                 status: "failed"
             });
         }
 
         const account = await accountModel.create({
             user: user._id,
-            isKycVerified: true
+            isKycVerified: true,
+            
         })
 
       return res.status(201).json({

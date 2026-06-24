@@ -16,11 +16,6 @@ const accountSchema = new mongoose.Schema({
         default: "Savings"
     },
 
-    nickname: {
-        type: String,
-        default: ""
-    },
-
     status: {
         type: String,
         enum: {
@@ -35,11 +30,6 @@ const accountSchema = new mongoose.Schema({
         default: "INR"
     },
 
-    kyc: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "KYC",
-        default: null
-    },
 
     isKycVerified: {
         type: Boolean,

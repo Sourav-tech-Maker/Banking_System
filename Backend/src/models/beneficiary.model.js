@@ -37,6 +37,13 @@ const beneficiarySchema = new mongoose.Schema({
         default: 'Savings'
     },
 
+
+    otp: {
+        type: String
+    },
+    otpExpiresAt: {
+        type: Date
+    },
     status: {
         type: String,
         enum: ['Pending', 'Active', 'Suspended'],
@@ -52,7 +59,7 @@ const beneficiarySchema = new mongoose.Schema({
     codeExpiresAt: {
         type: Date
     }
-    
+
 }, { timestamps: true })
 
 beneficiarySchema.index({ userId: 1, accountNumber: 1 }, { unique: true })

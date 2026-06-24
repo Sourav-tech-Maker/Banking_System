@@ -7,7 +7,7 @@ const router = express.Router()
  * - POST /api/account/
  * - create a new account 
  */ 
-router.post('/', authmiddleware, accountController.createAccountController)
+router.post('/', authmiddleware, accountController.createAccount)
 
 
 /**
@@ -15,12 +15,12 @@ router.post('/', authmiddleware, accountController.createAccountController)
  * - Get all accounts of the logged in user
  * - Protected Route
  */
-router.get('/', authmiddleware, accountController.getAccountDetailsController)
+router.get('/', authmiddleware, accountController.getAccountDetails)
 /**
  * - GET /api/account/balance/:accountId
  * - Get balance of a specific account
  * - Protected Route
  */
-router.get('/balance/:accountId', authmiddleware, accountController.getAccountBalanceController)
+router.get('/balance/:accountId', authmiddleware, accountController.getAccountBalance)
 
 module.exports = router

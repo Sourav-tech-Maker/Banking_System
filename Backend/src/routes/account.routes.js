@@ -11,7 +11,7 @@ router.post('/', authmiddleware, accountController.createAccount)
 
 
 /**
- * - GET /api/account/
+ * - GET /api/account/  
  * - Get all accounts of the logged in user
  * - Protected Route
  */

@@ -4,9 +4,13 @@ const userModel = require('../models/user.model')
 const sessionModel = require('../models/session.model')
 const config = require('../config/config')
 const bcrypt = require('bcryptjs');
+const utils = require('../Utils/otp.utils')
+const otpModel = require('../models/otp.model')
 const jwt = require('jsonwebtoken')
 const { sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
 const tokenBlackListModel = require('../models/blackList.token.model')
+
+const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
@@ -246,4 +250,4 @@ async function logoutUser(req, res) {
     }
 }
 
-module.exports = { registerUser, loginUser, logoutUser }
+module.exports = { registerUser, verifyOtp, loginUser, logoutUser }

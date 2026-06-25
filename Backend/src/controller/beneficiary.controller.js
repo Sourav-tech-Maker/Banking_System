@@ -6,6 +6,7 @@ const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
 
 async function addBeneficiaries(req, res) {
     try {
+        const currentLoggedInUserId = req.user._id;
         const { userId, fullName, nickName, accountId, email } = req.body || {};
 
         if (!userId || !fullName || !nickName || !accountId || !email) {
@@ -37,14 +38,14 @@ async function addBeneficiaries(req, res) {
             });
         }
 
-        if (targetAccount.user.equals(userId)) {
+        if (targetAccount.user.equals(currentLoggedInUserId)) {
             return res.status(400).json({
                 message: "You cannot add your own account as a beneficiary.",
                 status: "failed"
             });
         }
 
-        const isAlreadyAdded = await beneficiaryModel.findOne({ userId, accountId });
+        const isAlreadyAdded = await beneficiaryModel.findOne({ userId: currentLoggedInUserId, accountId });
         if (isAlreadyAdded) {
             return res.status(409).json({
                 message: "This beneficiary is already added to your list.",
@@ -53,12 +54,12 @@ async function addBeneficiaries(req, res) {
         }
 
         const otp = generateOtp();
-        await beneficiary.save();
         const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+        
 
 
         const beneficiary = await beneficiaryModel.create({
-            userId,
+           userId: currentLoggedInUserId, // Links to the person adding the contact
             fullName,
             nickName,
             accountId,
@@ -109,7 +110,7 @@ async function verifyBeneficiary(req, res) {
 
         console.log("Stored OTP:", beneficiary.otp, typeof beneficiary.otp);
         console.log("Received OTP:", otp, typeof otp);
-        if (beneficiary.otp !== otp) {
+        if (String(beneficiary.otp) !== String(otp)) {
             return res.status(400).json({
                 message: "Invalid OTP code provided."
             });

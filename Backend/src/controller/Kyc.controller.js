@@ -5,18 +5,19 @@ const userModel = require('../models/user.model')
 const accountModel = require('../models/account.model')
 
 
+
 async function registerKyc(req, res, next) {
 
     try {
-        const { UserId, FullName, dateOfBirth, gender, permanentAddress, documentDetails } = req.body || {}
-        if (!UserId || !FullName || !dateOfBirth || !gender || !permanentAddress || !documentDetails) {
+        const { UserId, FullName, dateOfBirth, gender, permanentAddress, documentType, documentNumber, documentImg } = req.body || {}
+        if (!UserId || !FullName || !dateOfBirth || !gender || !permanentAddress || !documentType || !documentNumber || !documentImg) {
             return res.status(400).json({
                 message: "All Field are required for register Kyc",
                 status: "failed"
             })
         }
-        const user = req.body
-        const fetchDetails = await userModel.findOne({ user: user._id })
+
+        const fetchDetails = await userModel.findById(UserId)
 
         if (!fetchDetails) {
             return res.status(404).json({
@@ -39,14 +40,15 @@ async function registerKyc(req, res, next) {
                 status: false
             })
         }
-
         const Kyc = await kycModel.create({
             UserId,
             FullName,
             dateOfBirth,
             gender,
             permanentAddress,
-            documentDetails,
+            documentType,
+            documentNumber,
+            documentImg,
             status: "Pending"
         })
 
@@ -112,13 +114,13 @@ async function verifyKyc(req, res, next) {
                 status: "success"
             });
         }
-        
+
         kycRecord.status = 'Approve';
-        kycRecord.rejectReason = null; 
+        kycRecord.rejectReason = null;
         await kycRecord.save();
 
         await accountModel.findOneAndUpdate(
-            { user: UserId }, 
+            { user: UserId },
             { isKycVerified: true }
         );
 

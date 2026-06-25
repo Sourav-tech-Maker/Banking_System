@@ -56,7 +56,7 @@ const kycSchema = new mongoose.Schema({
             trim: true
         }
     },
-    documentDetails: {
+   
         documentType: {
             type: String,
             enum: {
@@ -75,7 +75,7 @@ const kycSchema = new mongoose.Schema({
             type: String,
             required: [true, "Document image upload is required"]
         },
-    },
+   
 
     status: {
         type: String,

@@ -1,18 +1,19 @@
 const express = require('express')
 const beneficiary = require('../controller/beneficiary.controller')
+const authMiddleware = require('../middleware/auth.middleware')
 const authRouter = express.Router();
 
 /**
  * POST /api/beneficiary/add-beneficiary
  */
-authRouter.post('/add-beneficiary', beneficiary.addBeneficiaries)
+authRouter.post('/add-beneficiary',authMiddleware, beneficiary.addBeneficiaries)
 /**
  * POST /api/beneficiary/:id
  */
-authRouter.post('/verify', beneficiary.verifyBeneficiary)
+authRouter.post('/verify',authMiddleware, beneficiary.verifyBeneficiary)
 
  // GET /api/beneficiary/get-beneficiary
-authRouter.get('/get-beneficiary/:userId', beneficiary.getBeneficiaries)
+authRouter.get('/get-beneficiary/:userId',authMiddleware, beneficiary.getBeneficiaries)
 
 
 module.exports = authRouter

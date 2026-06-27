@@ -9,8 +9,9 @@ const accountModel = require('../models/account.model')
 async function registerKyc(req, res, next) {
 
     try {
-        const { UserId, FullName, dateOfBirth, gender, permanentAddress, documentType, documentNumber, documentImg } = req.body || {}
-        if (!UserId || !FullName || !dateOfBirth || !gender || !permanentAddress || !documentType || !documentNumber || !documentImg) {
+        const { FullName, dateOfBirth, gender, permanentAddress, documentType, documentNumber, documentImg } = req.body || {}
+        const UserId = req.user._id;
+        if (!FullName || !dateOfBirth || !gender || !permanentAddress || !documentType || !documentNumber || !documentImg) {
             return res.status(400).json({
                 message: "All Field are required for register Kyc",
                 status: "failed"

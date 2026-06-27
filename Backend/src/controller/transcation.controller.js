@@ -3,8 +3,6 @@ const ledgerModel = require('../models/ledger.model')
 const emailService = require('../services/email.service')
 const accountModel = require('../models/account.model')
 const transactionModel = require('../models/transaction.model')
-const KycModel = require('../models/kyc.models')
-const jwt = require('jsonwebtoken')
 /**
  * - Create a new Transcation
  * THE 10-STEP TRANSFER FLOW:
@@ -25,13 +23,6 @@ async function createTransaction(req, res, next) {
      */
     const { FromAccount, toAccount, amount, idempotencyKey } = req.body
 
-    if(accountModel.isKycVerified === false || KycModel.status != 'Approve'){
-        return res.status(403).json({
-            message: "You don't have access to creating Transaction",
-            status: 'failed'
-        })
-    }
-
     if (!FromAccount || !toAccount || !amount || !idempotencyKey) {
         return res.status(400).json({
             message: "Missing required fields: FromAccount, toAccount, amount, idempotencyKey"
@@ -45,6 +36,22 @@ async function createTransaction(req, res, next) {
     if (!FromAccountData || !toAccountData) {
         return res.status(404).json({
             message: "FromAccount or toAccount are not found!..."
+        })
+    }
+
+    // Verify the sender account belongs to the currently logged-in user
+    if (!FromAccountData.user.equals(req.user._id)) {
+        return res.status(403).json({
+            message: "You are not authorized to transfer from this account",
+            status: 'failed'
+        })
+    }
+
+    // Check KYC on the actual sender account document
+    if (!FromAccountData.isKycVerified) {
+        return res.status(403).json({
+            message: "You don't have access to creating Transaction. KYC is not verified.",
+            status: 'failed'
         })
     }
 

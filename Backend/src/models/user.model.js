@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
+    status: {
+        type: String,
+        default: "Active"
+    },
+
     kyc: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "KYC",

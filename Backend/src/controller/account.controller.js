@@ -1,10 +1,5 @@
-const mongoose = require('mongoose')
 const accountModel = require('../models/account.model')
 const kycModel = require('../models/kyc.models')
-const Kyc = require('../controller/Kyc.controller')
-const bcrypt = require('bcryptjs')
-const JWT = require('jsonwebtoken')
-
 
 async function createAccount(req, res, next) {
     try {

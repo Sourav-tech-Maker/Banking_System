@@ -143,13 +143,7 @@ async function verifyBeneficiary(req, res) {
 
 async function getBeneficiaries(req, res) {
     try {
-        const { userId } = req.params;
-        if (!userId) {
-            return res.status(400).json({
-                message: "User ID is required to fetch beneficiaries.",
-                status: "failed"
-            });
-        }
+        const userId = req.user._id;
 
         const beneficiariesList = await beneficiaryModel.find({ userId, isVerified: true }).populate({
             path: 'accountId',

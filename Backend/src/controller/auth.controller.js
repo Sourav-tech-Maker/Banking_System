@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const utils = require('../Utils/otp.utils')
 const otpModel = require('../models/otp.model')
 const jwt = require('jsonwebtoken')
-const { sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
+const { sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
 const tokenBlackListModel = require('../models/blackList.token.model')
 
 const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
@@ -48,7 +48,7 @@ async function registerUser(req, res, next) {
                 status: "failed"
             })
         }
-
+        
         const user = await userModel.create({
             username,
             email,
@@ -70,13 +70,6 @@ async function registerUser(req, res, next) {
         await sendEmail(email, "Verify Your Email", text, html);
 
 
-        const token = jwt.sign({
-            userid: user._id,
-            role: user.role,
-        }, config.JWT_SECRET, { expiresIn: "3d" })
-
-        // Secure cookies
-        res.cookie("token", token)
 
         res.status(201).json({
             message: "User registered successfully",
@@ -91,6 +84,7 @@ async function registerUser(req, res, next) {
         // await emailService.sendRegistrationEmail(user.email, user.username)
 
     } catch (error) {
+        console.error("Register Error:", error);
         next(error)
     }
 
@@ -165,12 +159,45 @@ async function loginUser(req, res, next) {
             })
         }
 
+        if (!user.verified) {
+            return res.status(403).json({
+                message: "Please verify your email before logging in."
+            })
+        }
+
+        if (user.status !== "Active") {
+            return res.status(403).json({
+                message: "Your account is not active."
+            })
+        }
+
+        if (
+            user.lockUntil &&
+            user.lockUntil > Date.now()
+        ) {
+            return res.status(403).json({
+                message:
+                    "Account temporarily locked. Try again later."
+            });
+        }
+
         const isPasswordValid = await user.comparePassword(password)
         if (!isPasswordValid) {
+            user.loginAttempts += 1;
+
+            if (user.loginAttempts >= 5) {
+                user.lockUntil = Date.now() + 15 * 60 * 1000;
+                user.loginAttempts = 0;
+            }
+            await user.save()
             return res.status(401).json({
                 message: "Email or Password is INVALID"
             })
         }
+
+        user.loginAttempts = 0;
+        user.lockUntil = undefined;
+        await user.save();
 
         const accessToken = jwt.sign({
             userid: user._id,
@@ -184,6 +211,14 @@ async function loginUser(req, res, next) {
         const hashedRefreshToken = hashToken(refreshToken)
         const sessionExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
+        const existingSession = await sessionModel.findOne({
+            user: user._id,
+            userAgent: req.headers["user-agent"]
+        });
+
+        if (!existingSession) { await sendNewDeviceLoginEmail( user.email, user.username);
+        }
+
         await sessionModel.create({
             user: user._id,
             refreshTokenHash: hashedRefreshToken,
@@ -192,8 +227,15 @@ async function loginUser(req, res, next) {
             expiresAt: sessionExpiry
         })
         // Secure cookies
+        res.cookie("token", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000 // 15 minutes (matches JWT expiry)
+        })
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
@@ -216,7 +258,7 @@ async function loginUser(req, res, next) {
  *  - User Logout Controller
  *  - Post /api/auth/logout
  */
-async function logoutUser(req, res) {
+async function logoutUser(req, res, next) {
 
     try {
         const refreshToken = req.cookies.refreshToken
@@ -227,20 +269,20 @@ async function logoutUser(req, res) {
         }
         const hashedRefreshToken = hashToken(refreshToken)
         await sessionModel.findOneAndUpdate(
-            {refreshTokenHash: hashedRefreshToken, revoked: false},
+            { refreshTokenHash: hashedRefreshToken, revoked: false },
             {
                 revoked: true,
                 revokedAt: new Date()
             }
         )
 
-        const accessToken = req.cookies.token || req.headers.authorization?.spilt("")[1]
-        if(accessToken){
-            await tokenBlackListModel.create({token: accessToken})
+        const accessToken = req.cookies.token || req.headers.authorization?.split(" ")[1]
+        if (accessToken) {
+            await tokenBlackListModel.create({ token: accessToken })
         }
 
         res.clearCookie("refreshToken"),
-        res.clearCookie("token")
+            res.clearCookie("token")
 
         return res.status(200).json({
             message: "User logged out successfully"

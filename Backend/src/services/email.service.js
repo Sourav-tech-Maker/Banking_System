@@ -41,6 +41,31 @@ async function sendEmail(to, subject, text, html) {
     console.error('Error sending email:', error);
   }
 }
+// New Device LoginEmail
+
+async function sendNewDeviceLoginEmail(email, username) {
+    const html = `
+        <h2>New Device Login</h2>
+        <p>Hello ${username},</p>
+        <p>Your account was logged in from a new device.</p>
+        <p>If this wasn't you, please change your password immediately.</p>
+        <br>
+        <p>Regards,</p>
+        <p>Secure Bank Team</p>
+    `;
+
+    const text = `
+Hello ${username},
+Your account was logged in from a new device.
+If this wasn't you, please change your password immediately.
+Regards,
+Secure Bank Team
+`;
+    return sendEmail( email, "New Device Login Detected", text,html);
+}
+
+
+
 async function sendRegistrationEmail(userEmail, name) {
   const subject = "Welcome to Nexora - Account Registration Successful";
 
@@ -244,4 +269,4 @@ async function sendPasswordResetEmail(userEmail, name, resetLink) {
 }
 
 
-module.exports = {sendEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };
+module.exports = {sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };

@@ -13,7 +13,7 @@ authRouter.post('/add-beneficiary',authMiddleware, beneficiary.addBeneficiaries)
 authRouter.post('/verify',authMiddleware, beneficiary.verifyBeneficiary)
 
  // GET /api/beneficiary/get-beneficiary
-authRouter.get('/get-beneficiary/:userId',authMiddleware, beneficiary.getBeneficiaries)
+authRouter.get('/get-beneficiary',authMiddleware, beneficiary.getBeneficiaries)
 
 
 module.exports = authRouter

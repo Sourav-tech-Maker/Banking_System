@@ -60,5 +60,15 @@ async function authSystemUserMiddleware(req, res, next) {
     }
 }
 
+async function adminMiddleware(req, res, next) {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({
+            message: "Forbidden access, admin privilege required"
+        })
+    }
+    return next()
+}
+
 module.exports = authmiddleware;
 module.exports.authSystemUserMiddleware = authSystemUserMiddleware;
+module.exports.adminMiddleware = adminMiddleware;

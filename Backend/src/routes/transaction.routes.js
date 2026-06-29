@@ -7,8 +7,7 @@ const transactionRoutes = express.Router()
 /**
  * Post /api/transaction/
  * Create a new transaction
- * Protected Route
- * requires fromAccount, toAccount, amount, idempotencyKey in the request body
+ * Protected Route - requires fromAccount, toAccount, amount, idempotencyKey in the request body
  */
 transactionRoutes.post('/',authMiddleware, transactionController.createTransaction)
 
@@ -19,4 +18,12 @@ transactionRoutes.post('/',authMiddleware, transactionController.createTransacti
  */
 transactionRoutes.post('/system/initial-funds', authmiddleware.authSystemUserMiddleware, transactionController.createInitialFundsTransaction)   
 
+/**
+ * GET /api/transaction/history
+ * Get paginated transaction history for the logged-in user
+ * Protected Route - supports query params: page, limit, type (all/credit/debit), startDate, endDate
+ */
+transactionRoutes.get('/history', authMiddleware, transactionController.getTransactionHistory)
+
 module.exports = transactionRoutes
+

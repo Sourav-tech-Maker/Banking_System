@@ -1,27 +1,22 @@
-import { Routes, Route } from "react-router-dom";
-import RegistrationPage from './Components/RegistrationPage'
-import VerifyOtp from './Components/VerifyUser';
-import LoginPage from './Components/LoginPage';
-import Home from "./Components/Home";
-import Footer from "./Components/Footer";
+import { Navigate, Route, Routes } from "react-router-dom";
 
+import Footer from "@/components/Footer";
+import Home from "@/components/Dashboard/Home";
+import LoginPage from "@/components/LoginPage";
+import RegistrationPage from "@/components/RegistrationPage";
+import VerifyOtp from "@/components/VerifyUser";
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<RegistrationPage />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path='/login' element={<LoginPage />} />
-      <Route path='/Home' element={<Home />} />
-      <Route path='/Footer' element={<Footer />} />
+      <Route element={<RegistrationPage />} path="/" />
+      <Route element={<VerifyOtp />} path="/verify-otp" />
+      <Route element={<LoginPage />} path="/login" />
+      <Route element={<Home />} path="/home" />
+      <Route element={<Navigate replace to="/home" />} path="/Home" />
+      <Route element={<Footer />} path="/footer" />
     </Routes>
+  );
+};
 
-  )
-}
-
-
-export default App
-
-
-
-
+export default App;

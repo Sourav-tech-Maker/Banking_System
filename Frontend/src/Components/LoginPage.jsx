@@ -32,6 +32,7 @@ const LoginPage = () => {
       );
       setErrorMessage("");
       setSuccessMessage(response.data.message);
+      sessionStorage.setItem("nexoraUser", JSON.stringify(response.data.user || {}));
 
       setTimeout(() => {
         navigate("/home", {

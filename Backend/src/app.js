@@ -5,6 +5,10 @@ const accountRouter = require("./routes/account.routes")
 const transactionRoutes = require('./routes/transaction.routes')
 const beneficiaryRoutes = require('./routes/beneficiary.route')
 const KycRoutes = require('./routes/Kyc.routes')
+const dashboardRoutes = require('./routes/dashboard.routes')
+const userRoutes = require('./routes/user.routes')
+const adminRoutes = require('./routes/admin.routes')
+const quizRoutes = require('./routes/quiz.routes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -23,6 +27,10 @@ app.use('/api/account', accountRouter)
 app.use('/api/transaction', transactionRoutes)
 app.use('/api/beneficiary', beneficiaryRoutes )
 app.use('/api/Kyc', KycRoutes)
+app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/user', userRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/quiz', quizRoutes)
 
 app.get('/', (req, res)=>{
     res.send("Welcome to Banking System API");
@@ -32,7 +40,7 @@ app.get('/', (req, res)=>{
 
 app.use((err, req, res, next) => {
     console.error(err); 
-    res.status(500).json({ message: err.message || "Something went wrong!" });
+    res.status(err.statusCode || 500).json({ message: err.message || "Something went wrong!" });
 });
 
 module.exports = app

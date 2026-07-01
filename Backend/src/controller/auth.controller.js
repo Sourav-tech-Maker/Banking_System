@@ -4,7 +4,6 @@ const userModel = require('../models/user.model')
 const sessionModel = require('../models/session.model')
 const config = require('../config/config')
 const bcrypt = require('bcryptjs');
-const utils = require('../Utils/otp.utils')
 const otpModel = require('../models/otp.model')
 const jwt = require('jsonwebtoken')
 const { sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
@@ -20,12 +19,24 @@ const hashToken = (token) => crypto.createHash('sha256').update(token).digest('h
  */
 async function registerUser(req, res, next) {
     try {
-        const { username, email, password, role = 'user' } = req.body
+        const { username, email, password, role = 'user', roleAccessKey } = req.body
+        const allowedRoles = ['user', 'admin', 'systemUser']
+        const requestedRole = allowedRoles.includes(role) ? role : 'user'
 
         if (!username || !email || !password) {
             return res.status(400).json({
                 message: "Username, email, and password are required"
             });
+        }
+
+        if (requestedRole !== 'user') {
+            const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
+
+            if (!rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {
+                return res.status(403).json({
+                    message: "A valid RBAC registration key is required for admin or system user registration."
+                })
+            }
         }
 
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -53,7 +64,7 @@ async function registerUser(req, res, next) {
             username,
             email,
             password,
-            role
+            role: requestedRole
         })
 
 

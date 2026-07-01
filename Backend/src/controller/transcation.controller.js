@@ -66,7 +66,7 @@ const receiverAccountPopulate = {
      * 8.Update transaction status to COMPLETED
      * 9.Send response
  */
-async function createTransaction(req, res, next) {
+async function createTransaction(req, res) {
 
     /**
      * 1. Validate request
@@ -165,7 +165,6 @@ async function createTransaction(req, res, next) {
      */
 
     // start a session for transaction
-    
     let transaction
     let session
     try {
@@ -257,7 +256,7 @@ async function createTransaction(req, res, next) {
 
 }
 
-async function createInitialFundsTransaction(req, res, next) {
+async function createInitialFundsTransaction(req, res) {
     const { toAccount, amount, idempotencyKey } = req.body
 
     if (!toAccount || !amount || !idempotencyKey) {

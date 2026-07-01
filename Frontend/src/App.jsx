@@ -5,11 +5,13 @@ import Home from "@/components/Dashboard/Home";
 import LoginPage from "@/components/LoginPage";
 import RegistrationPage from "@/components/RegistrationPage";
 import VerifyOtp from "@/components/VerifyUser";
+import NexoraLanding from "@/components/Landing/NexoraLanding";
 
 const App = () => {
   return (
     <Routes>
-      <Route element={<RegistrationPage />} path="/" />
+      <Route element={<NexoraLanding />} path="/" />
+      <Route element={<RegistrationPage />} path="/register" />
       <Route element={<VerifyOtp />} path="/verify-otp" />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<Home />} path="/home" />

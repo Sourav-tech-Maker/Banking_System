@@ -12,7 +12,9 @@ const RegistrationPage = () => {
     const [formData, setFormData] = useState({
         username: "",
         email: "",
-        password: ""
+        password: "",
+        role: "user",
+        roleAccessKey: ""
     });
     const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
@@ -185,6 +187,36 @@ const RegistrationPage = () => {
                                     <label className="font-medium"> Password </label>
                                     <input type="password" name="password" value={formData.password} onChange={handleChange} required className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
                                 </div>
+                                <div>
+                                    <label className="font-medium">Role</label>
+                                    <select
+                                        name="role"
+                                        value={formData.role}
+                                        onChange={handleChange}
+                                        className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
+                                    >
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="systemUser">System User</option>
+                                    </select>
+                                </div>
+                                {formData.role !== "user" && (
+                                    <div>
+                                        <label className="font-medium">RBAC Registration Key</label>
+                                        <input
+                                            type="password"
+                                            name="roleAccessKey"
+                                            value={formData.roleAccessKey}
+                                            onChange={handleChange}
+                                            required
+                                            placeholder="Enter privileged role key"
+                                            className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
+                                        />
+                                        <p className="mt-2 text-xs text-gray-500">
+                                            Required only for admin and system user registration.
+                                        </p>
+                                    </div>
+                                )}
                                 <button className="w-full px-4 py-2 text-white font-medium bg-blue-600 hover:bg-blue-700 active:bg-indigo-600 rounded-lg duration-150" >
                                     Create account
                                 </button>

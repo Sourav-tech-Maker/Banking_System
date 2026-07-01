@@ -19,7 +19,21 @@ if(!process.env.REFRESH_TOKEN){
 }   
 if(!process.env.EMAIL_USER){
     throw new Error("EMAIL_USER is not defined in environment variables")
-}   
+}  
+
+if(!process.env.RBAC_REGISTRATION_KEY){
+    throw new Error('RBAC_REGISTRATION_KEY is not defined in environment variables')
+}
+
+const imageKitPrivateKey = process.env.IMAGEKIT_PRIVATE_KEY?.trim()
+
+if(!imageKitPrivateKey){
+    throw new Error('IMAGEKIT_PRIVATE_KEY is not defined in environment variables')
+}
+
+if(!imageKitPrivateKey.startsWith('private_')){
+    throw new Error('IMAGEKIT_PRIVATE_KEY must be your ImageKit private key. It should start with private_, not public_.')
+}
 
 
 const config = {
@@ -28,6 +42,10 @@ const config = {
     CLIENT_ID: process.env.CLIENT_ID,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
     REFRESH_TOKEN: process.env.REFRESH_TOKEN,
-    EMAIL_USER: process.env.EMAIL_USER
+    EMAIL_USER: process.env.EMAIL_USER,
+    RBAC_REGISTRATION_KEY:process.env.RBAC_REGISTRATION_KEY,
+    IMAGEKIT_PRIVATE_KEY: imageKitPrivateKey,
+    IMAGEKIT_KYC_FOLDER: process.env.IMAGEKIT_KYC_FOLDER || "/banking-system/kyc-documents",
+
 }
 module.exports = config

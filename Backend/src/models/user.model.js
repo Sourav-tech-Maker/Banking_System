@@ -39,6 +39,13 @@ const userSchema = new mongoose.Schema({
         default: "Active"
     },
 
+    role: {
+        type: String,
+        enum: ['user', 'admin', 'systemUser'],
+        default: 'user',
+        index: true
+    },
+
     kyc: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "KYC",
@@ -50,6 +57,15 @@ const userSchema = new mongoose.Schema({
         default: false,
         immutable: true,
         select: false
+    },
+
+    loginAttempts: {
+        type: Number,
+        default: 0
+    },
+
+    lockUntil: {
+        type: Date
     }
 }, {
     timestamps: true
@@ -60,6 +76,7 @@ userSchema.pre('save', async function () {
     if (!this.userId) {
         this.userId = this._id;
     }
+    this.systemUser = this.role === 'systemUser';
     if (!this.isModified("password")) {
         return;
     }

@@ -3,15 +3,99 @@ const config = require('../config/config')
 const kycModel = require('../models/kyc.models')
 const userModel = require('../models/user.model')
 const accountModel = require('../models/account.model')
+const { Blob } = require('buffer')
+
+const IMAGEKIT_UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload";
+const MAX_DOCUMENT_IMAGE_SIZE = 5 * 1024 * 1024;
+
+function parsePermanentAddress(permanentAddress) {
+    if (typeof permanentAddress !== "string") {
+        return permanentAddress;
+    }
+
+    try {
+        return JSON.parse(permanentAddress);
+    } catch (error) {
+        return null;
+    }
+}
+
+function hasCompleteAddress(permanentAddress) {
+    return Boolean(
+        permanentAddress &&
+        permanentAddress.street &&
+        permanentAddress.city &&
+        permanentAddress.state &&
+        permanentAddress.country &&
+        permanentAddress.postalCode
+    );
+}
+
+function sanitizeFileName(fileName = "document-image") {
+    return fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
+
+async function uploadDocumentImageToImageKit(file, userId) {
+    if (!config.IMAGEKIT_PRIVATE_KEY) {
+        const error = new Error("ImageKit private key is not configured on the server.");
+        error.statusCode = 500;
+        throw error;
+    }
+
+    if (!file) {
+        return null;
+    }
+
+    if (file.size > MAX_DOCUMENT_IMAGE_SIZE) {
+        const error = new Error("Document image must be 5MB or less.");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const uploadFormData = new FormData();
+    const safeOriginalName = sanitizeFileName(file.originalname);
+    const uploadFileName = `kyc-${userId}-${Date.now()}-${safeOriginalName}`;
+
+    uploadFormData.append("file", new Blob([file.buffer], { type: file.mimetype }), safeOriginalName);
+    uploadFormData.append("fileName", uploadFileName);
+    uploadFormData.append("folder", config.IMAGEKIT_KYC_FOLDER);
+    uploadFormData.append("useUniqueFileName", "true");
+
+    const authHeader = Buffer.from(`${config.IMAGEKIT_PRIVATE_KEY}:`).toString("base64");
+    const response = await fetch(IMAGEKIT_UPLOAD_URL, {
+        method: "POST",
+        headers: {
+            Authorization: `Basic ${authHeader}`
+        },
+        body: uploadFormData
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        const error = new Error(data.message || "Failed to upload document image to ImageKit.");
+        error.statusCode = 502;
+        throw error;
+    }
+
+    if (!data.url) {
+        const error = new Error("ImageKit upload succeeded but did not return an image URL.");
+        error.statusCode = 502;
+        throw error;
+    }
+
+    return data.url;
+}
 
 
 
 async function registerKyc(req, res, next) {
 
     try {
-        const { FullName, dateOfBirth, gender, permanentAddress, documentType, documentNumber, documentImg } = req.body || {}
+        let { FullName, dateOfBirth, gender, permanentAddress, documentType, documentNumber, documentImg } = req.body || {}
+        permanentAddress = parsePermanentAddress(permanentAddress);
         const UserId = req.user._id;
-        if (!FullName || !dateOfBirth || !gender || !permanentAddress || !documentType || !documentNumber || !documentImg) {
+        if (!FullName || !dateOfBirth || !gender || !hasCompleteAddress(permanentAddress) || !documentType || !documentNumber || (!documentImg && !req.file)) {
             return res.status(400).json({
                 message: "All Field are required for register Kyc",
                 status: "failed"
@@ -41,6 +125,11 @@ async function registerKyc(req, res, next) {
                 status: false
             })
         }
+
+        if (req.file) {
+            documentImg = await uploadDocumentImageToImageKit(req.file, UserId);
+        }
+
         const Kyc = await kycModel.create({
             UserId,
             FullName,

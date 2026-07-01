@@ -33,6 +33,17 @@ async function authmiddleware(req, res, next) {
     }
 }
 
+function requireRole(...roles) {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({
+                message: `Forbidden access, required role: ${roles.join(' or ')}`
+            })
+        }
+
+        return next()
+    }
+}
 
 async function authSystemUserMiddleware(req, res, next) {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
@@ -46,9 +57,9 @@ async function authSystemUserMiddleware(req, res, next) {
     try {
         const decoded = jwt.verify(token, config.JWT_SECRET)
         const user = await userModel.findById(decoded.userid).select("+systemUser")
-        if (!user.systemUser) {
+        if (user.role !== 'systemUser' && !user.systemUser) {
             return res.status(403).json({
-                message: "Forbidden accecss, not a system user"
+                message: "Forbidden access, not a system user"
             })
         }
         req.user = user
@@ -60,15 +71,9 @@ async function authSystemUserMiddleware(req, res, next) {
     }
 }
 
-async function adminMiddleware(req, res, next) {
-    if (!req.user || req.user.role !== 'admin') {
-        return res.status(403).json({
-            message: "Forbidden access, admin privilege required"
-        })
-    }
-    return next()
-}
+const adminMiddleware = requireRole('admin')
 
 module.exports = authmiddleware;
 module.exports.authSystemUserMiddleware = authSystemUserMiddleware;
 module.exports.adminMiddleware = adminMiddleware;
+module.exports.requireRole = requireRole;

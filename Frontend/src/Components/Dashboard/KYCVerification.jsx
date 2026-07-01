@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   AlertCircle,
@@ -9,7 +9,9 @@ import {
   Loader2,
   MapPin,
   ShieldCheck,
+  UploadCloud,
   User,
+  X,
 } from "lucide-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -28,12 +30,16 @@ const documentTypes = [
 ];
 
 const genderOptions = ["Male", "Female", "Other"];
+const allowedDocumentImageTypes = ["image/jpeg", "image/png", "image/webp"];
+const maxDocumentImageSize = 5 * 1024 * 1024;
 
 export default function KYCVerification() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [documentFile, setDocumentFile] = useState(null);
+  const [documentPreviewUrl, setDocumentPreviewUrl] = useState("");
 
   const [formData, setFormData] = useState({
     FullName: "",
@@ -51,6 +57,14 @@ export default function KYCVerification() {
     documentImg: "",
   });
 
+  useEffect(() => {
+    return () => {
+      if (documentPreviewUrl) {
+        URL.revokeObjectURL(documentPreviewUrl);
+      }
+    };
+  }, [documentPreviewUrl]);
+
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -60,6 +74,41 @@ export default function KYCVerification() {
       ...prev,
       permanentAddress: { ...prev.permanentAddress, [field]: value },
     }));
+  };
+
+  const handleDocumentFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!allowedDocumentImageTypes.includes(file.type)) {
+      setError("Please upload a JPG, PNG, or WEBP document image.");
+      setDocumentFile(null);
+      setDocumentPreviewUrl("");
+      updateField("documentImg", "");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > maxDocumentImageSize) {
+      setError("Document image must be 5MB or less.");
+      setDocumentFile(null);
+      setDocumentPreviewUrl("");
+      updateField("documentImg", "");
+      event.target.value = "";
+      return;
+    }
+
+    setError("");
+    setDocumentFile(file);
+    setDocumentPreviewUrl(URL.createObjectURL(file));
+    updateField("documentImg", file.name);
+    event.target.value = "";
+  };
+
+  const clearDocumentImage = () => {
+    setDocumentFile(null);
+    setDocumentPreviewUrl("");
+    updateField("documentImg", "");
   };
 
   const validateStep = () => {
@@ -82,7 +131,7 @@ export default function KYCVerification() {
     if (currentStep === 3) {
       if (!formData.documentType) return setError("Document type is required"), false;
       if (!formData.documentNumber.trim()) return setError("Document number is required"), false;
-      if (!formData.documentImg.trim()) return setError("Document image URL is required"), false;
+      if (!documentFile) return setError("Document image is required"), false;
       return true;
     }
     return true;
@@ -106,7 +155,16 @@ export default function KYCVerification() {
     setError("");
 
     try {
-      await axios.post(`${API_BASE_URL}/api/Kyc/register-kyc`, formData, {
+      const kycPayload = new FormData();
+      kycPayload.append("FullName", formData.FullName);
+      kycPayload.append("dateOfBirth", formData.dateOfBirth);
+      kycPayload.append("gender", formData.gender);
+      kycPayload.append("permanentAddress", JSON.stringify(formData.permanentAddress));
+      kycPayload.append("documentType", formData.documentType);
+      kycPayload.append("documentNumber", formData.documentNumber);
+      kycPayload.append("documentImg", documentFile);
+
+      await axios.post(`${API_BASE_URL}/api/Kyc/register-kyc`, kycPayload, {
         withCredentials: true,
       });
       setSuccess(true);
@@ -378,17 +436,65 @@ export default function KYCVerification() {
 
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Document Image URL
+                Document Image
+              </label>
+              <label
+                htmlFor="documentImg"
+                className={`flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed bg-white px-4 py-5 text-center transition ${
+                  documentPreviewUrl
+                    ? "border-emerald-200 bg-emerald-50/40"
+                    : "border-slate-300 hover:border-indigo-300 hover:bg-indigo-50/40"
+                }`}
+              >
+                {documentPreviewUrl ? (
+                  <div className="w-full">
+                    <img
+                      src={documentPreviewUrl}
+                      alt="Selected document preview"
+                      className="mx-auto max-h-48 rounded-lg border border-slate-200 object-contain"
+                    />
+                    <p className="mt-3 text-sm font-semibold text-emerald-700">
+                      Document image selected
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex size-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                      <UploadCloud className="size-6" />
+                    </div>
+                    <p className="mt-3 text-sm font-semibold text-slate-800">
+                      Choose document image
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      JPG, PNG, or WEBP up to 5MB
+                    </p>
+                  </>
+                )}
               </label>
               <input
-                type="url"
-                value={formData.documentImg}
-                onChange={(e) => updateField("documentImg", e.target.value)}
-                placeholder="https://example.com/document.jpg"
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                id="documentImg"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleDocumentFileChange}
+                className="sr-only"
               />
+              {documentFile && (
+                <div className="mt-2 flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                  <span className="min-w-0 truncate text-sm font-medium text-slate-700">
+                    {documentFile.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={clearDocumentImage}
+                    className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white hover:text-rose-600"
+                    aria-label="Remove selected document image"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              )}
               <p className="mt-1 text-xs text-slate-400">
-                Upload your document image to a hosting service and paste the URL here.
+                Upload a clear photo or scan of your original document.
               </p>
             </div>
 

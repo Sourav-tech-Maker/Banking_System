@@ -22,7 +22,6 @@ import {
   Sparkles,
   Trash2,
   TrendingUp,
-  Trophy,
   User,
   Users,
   Wallet,
@@ -296,24 +295,17 @@ export default function AdminPanel() {
       items: ["Earned coins", "Redeemed coins", "Redemption request", "Coin history"],
     },
     {
-      title: "Weekly Quiz",
-      status: "Planned",
-      icon: Trophy,
-      text: "Create, schedule, publish, and monitor Weekly Tech Quiz rewards.",
-      items: ["Create quiz", "Participants", "Leaderboard", "Rewards"],
-    },
-    {
       title: "Notification Center",
       status: "Planned",
       icon: Bell,
-      text: "Send maintenance, security, quiz, and promotional notifications.",
-      items: ["All users", "Selected users", "Security alerts", "Quiz news"],
+      text: "Send maintenance, security, and promotional notifications.",
+      items: ["All users", "Selected users", "Security alerts", "Promotions"],
     },
     {
       title: "Analytics",
       status: "Partial",
       icon: TrendingUp,
-      text: "User growth, KYC rate, revenue, transactions, and quiz analytics.",
+      text: "User growth, KYC rate, revenue, and transaction analytics.",
       items: ["Active users", "Revenue", "KYC rate", "Fraud stats"],
     },
     {
@@ -327,8 +319,8 @@ export default function AdminPanel() {
       title: "System Settings",
       status: "Planned",
       icon: Settings,
-      text: "Configure KYC rules, quiz fees, transaction limits, and security settings.",
-      items: ["KYC rules", "Quiz fee", "OTP expiry", "Maintenance mode"],
+      text: "Configure KYC rules, transaction limits, and security settings.",
+      items: ["KYC rules", "OTP expiry", "Transaction limits", "Maintenance mode"],
     },
     {
       title: "Fraud Center",
@@ -341,7 +333,7 @@ export default function AdminPanel() {
       title: "Reports",
       status: "Planned",
       icon: Download,
-      text: "Generate daily, weekly, monthly, user, KYC, quiz, and revenue reports.",
+      text: "Generate daily, weekly, monthly, user, KYC, and revenue reports.",
       items: ["PDF", "Excel", "CSV", "Monthly report"],
     },
     {
@@ -462,7 +454,6 @@ export default function AdminPanel() {
     "Transaction Report",
     "User Report",
     "KYC Report",
-    "Quiz Report",
     "Revenue Report",
   ];
 
@@ -1017,7 +1008,6 @@ export default function AdminPanel() {
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {[
                   "KYC verification rules",
-                  "Quiz entry fee",
                   "Coin conversion rate",
                   "Transaction limits",
                   "AI fraud threshold",
@@ -1043,10 +1033,9 @@ export default function AdminPanel() {
               Write the reason so the user knows what needs to be fixed.
             </p>
 
-            <textarea
-              className="mt-4 w-full rounded-lg border border-slate-200 p-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Example: Document name does not match account name."
+            <textarea  className="mt-4 w-full rounded-lg border border-slate-200 p-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+             onChange={(e) => setRejectReason(e.target.value)} 
+            placeholder="Example: Document name does not match account name."
               rows="3"
               value={rejectReason}
             />

@@ -9,15 +9,25 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
+    role: "user",
+    roleAccessKey: ""
   });
   const [loading, setLoading] = useState(false);
+
+  const needsRbac = formData.role === "admin" || formData.role === "systemUser";
+
   const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value,
-  });
-};
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === "role" && value === "user") {
+        updated.roleAccessKey = "";
+      }
+      return updated;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -134,6 +144,21 @@ const LoginPage = () => {
               <label className="font-medium">Password</label>
               <input type="password" name="password" value={formData.password} onChange={handleChange} autoComplete="current-password" required className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg" />
             </div>
+            <div>
+              <label className="font-medium">Role</label>
+              <select name="role" value={formData.role} onChange={handleChange} required className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="systemUser">System User</option>
+              </select>
+            </div>
+            {needsRbac && (
+              <div>
+                <label className="font-medium">RBAC Access Key</label>
+                <input type="password" name="roleAccessKey" value={formData.roleAccessKey} onChange={handleChange} required placeholder="Enter privileged role key" className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"/>
+                <p className="mt-1 text-xs text-gray-500"> Required for admin and system user login.</p>
+              </div>
+            )}
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-x-3">
                 <input type="checkbox" id="remember-me-checkbox" className="checkbox-item peer hidden" />

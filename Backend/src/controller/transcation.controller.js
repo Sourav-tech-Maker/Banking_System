@@ -153,8 +153,9 @@ async function createTransaction(req, res) {
      */
 
     const balance = await FromAccountData.getBalance()
+    const isSystemUser = req.user.role === 'systemUser'
 
-    if (balance < amount) {
+    if (!isSystemUser && balance < amount) {
         return res.status(400).json({
             message: `Insufficient balance to process transcation Current balance is ${balance}. Required balance is ${amount}`
         })

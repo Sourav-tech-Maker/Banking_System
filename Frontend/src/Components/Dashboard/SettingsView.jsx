@@ -5,7 +5,7 @@ const settings = [
   {
     key: "notifications",
     title: "Transaction Notifications",
-    description: "Receive alerts for credits, debits, KYC updates and quiz events.",
+    description: "Receive alerts for credits, debits, and KYC updates.",
     icon: Bell,
     defaultValue: true,
   },

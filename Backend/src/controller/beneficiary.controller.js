@@ -59,7 +59,7 @@ async function addBeneficiaries(req, res) {
 
 
         const beneficiary = await beneficiaryModel.create({
-           userId: currentLoggedInUserId, // Links to the person adding the contact
+           userId: currentLoggedInUserId, 
             fullName,
             nickName,
             accountId,

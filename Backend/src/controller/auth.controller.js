@@ -155,15 +155,17 @@ async function verifyOtp(req, res) {
  */
 async function loginUser(req, res, next) {
     try {
-        const { email, password } = req.body
+        const { email, password, role, roleAccessKey } = req.body
+        const allowedRoles = ['user', 'admin', 'systemUser']
+        const requestedRole = allowedRoles.includes(role) ? role : 'user'
 
-        if (!email || !password) {
+        if (!email || !password || (requestedRole !== 'user' && !roleAccessKey)) {
             return res.status(400).json({
-                message: "Email and password are required"
+                message: "Email, password, and RoleAccessKey are required"
             });
         }
 
-        const user = await userModel.findOne({ email }).select("+password")
+        const user = await userModel.findOne({ email }).select("+password +systemUser")
         if (!user) {
             return res.status(401).json({
                 message: "Email or Password is INVALID"
@@ -204,6 +206,27 @@ async function loginUser(req, res, next) {
             return res.status(401).json({
                 message: "Email or Password is INVALID"
             })
+        }
+
+        let actualRole = user.role;
+        if (user.systemUser) {
+            actualRole = 'systemUser';
+        }
+
+        if (actualRole !== requestedRole) {
+            return res.status(403).json({
+                message: "Selected role does not match this account."
+            });
+        }
+
+        if (requestedRole !== 'user') {
+            const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
+
+            if (!rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {
+                return res.status(403).json({
+                    message: "A valid RBAC registration key is required for admin or system user Login."
+                })
+            }
         }
 
         user.loginAttempts = 0;

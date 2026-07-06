@@ -64,10 +64,11 @@ GoalSchema.virtual('remainingAmount').get(function() {
 });
 
 // Calculate progress percentage dynamically
+// It isn't stored in the database—it is calculated automatically whenever you access the document.
 GoalSchema.virtual('progressPercentage').get(function() {
     if (this.targetAmount === 0) return 0;
     const percentage = (this.currentAmount / this.targetAmount) * 100;
-    return Math.min(Math.round(percentage), 100); // Caps at 100%
+    return Math.min(Math.round(percentage), 100); 
 })
 
 GoalSchema.pre('save', function(next) {

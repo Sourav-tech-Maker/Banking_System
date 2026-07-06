@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw, Send, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 import AppSidebar from "../app-sidebar";
@@ -9,14 +9,12 @@ import Navbar from "./Navbar";
 import RecentTransactions from "./RecentTransactions";
 import SpendingChart from "./SpendingChart";
 import StatsCards from "./StatsCards";
-import WeeklyQuiz from "./WeeklyQuiz";
 import TransactionHistory from "./TransactionHistory";
 import OpenAccount from "./OpenAccount";
 import KYCVerification from "./KYCVerification";
 import AdminPanel from "./AdminPanel";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
-import WeeklyTechQuiz from "./WeeklyTechQuiz";
 
 import {
   SidebarInset,
@@ -50,13 +48,6 @@ const emptyDashboard = {
     savingsPotential: 0,
     items: [],
   },
-  weeklyQuiz: {
-    title: "Weekly Tech Quiz",
-    entryFee: 5,
-    prizePool: 100,
-    participants: 0,
-    status: "locked",
-  },
 };
 
 function readStoredUser() {
@@ -83,10 +74,6 @@ function mergeDashboard(payload) {
       ...emptyDashboard.aiInsights,
       ...(payload?.aiInsights || {}),
       items: payload?.aiInsights?.items || emptyDashboard.aiInsights.items,
-    },
-    weeklyQuiz: {
-      ...emptyDashboard.weeklyQuiz,
-      ...(payload?.weeklyQuiz || {}),
     },
     recentTransactions: payload?.recentTransactions || [],
   };
@@ -130,6 +117,70 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [activeView, setActiveView] = useState("dashboard");
+
+  // Send Money modal state
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [userAccounts, setUserAccounts] = useState([]);
+  const [sendForm, setSendForm] = useState({
+    FromAccount: "",
+    toAccount: "",
+    amount: "",
+  });
+  const [sendLoading, setSendLoading] = useState(false);
+  const [sendError, setSendError] = useState("");
+  const [sendSuccess, setSendSuccess] = useState("");
+
+  // Fetch user accounts for the FromAccount dropdown
+  const fetchAccounts = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/account`, {
+        withCredentials: true,
+      });
+      const accounts = res.data?.accounts || [];
+      setUserAccounts(accounts);
+      if (accounts.length === 1) {
+        setSendForm((prev) => ({ ...prev, FromAccount: accounts[0]._id }));
+      }
+    } catch {
+      // Silently fail — accounts will show empty
+    }
+  }, []);
+
+  const handleSendMoney = async (e) => {
+    e.preventDefault();
+    setSendLoading(true);
+    setSendError("");
+    setSendSuccess("");
+
+    try {
+      const idempotencyKey = crypto.randomUUID();
+      const res = await axios.post(
+        `${API_BASE_URL}/api/transaction`,
+        {
+          FromAccount: sendForm.FromAccount,
+          toAccount: sendForm.toAccount,
+          amount: Number(sendForm.amount),
+          idempotencyKey,
+        },
+        { withCredentials: true }
+      );
+      setSendSuccess(res.data?.message || "Transaction successful!");
+      setSendForm({ FromAccount: userAccounts.length === 1 ? userAccounts[0]._id : "", toAccount: "", amount: "" });
+      // Refresh dashboard after successful transaction
+      fetchDashboard();
+    } catch (err) {
+      setSendError(err.response?.data?.message || "Transaction failed. Please try again.");
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  const openSendModal = () => {
+    setSendError("");
+    setSendSuccess("");
+    setShowSendModal(true);
+    fetchAccounts();
+  };
 
   const fetchDashboard = useCallback(async () => {
     setError("");
@@ -214,13 +265,6 @@ const Home = () => {
         return <ProfileView />;
       case "settings":
         return <SettingsView />;
-      case "quiz":
-        return (
-          <WeeklyTechQuiz
-            quiz={dashboard.weeklyQuiz}
-            onBack={() => setActiveView("dashboard")}
-          />
-        );
       default:
         return (
           <>
@@ -245,6 +289,19 @@ const Home = () => {
               <DashboardSkeleton />
             ) : (
               <>
+                {/* Send Money Button */}
+                <div className="flex items-center justify-between">
+                  <div />
+                  <button
+                    type="button"
+                    onClick={openSendModal}
+                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:bg-indigo-800"
+                  >
+                    <Send className="size-4" />
+                    Send Money
+                  </button>
+                </div>
+
                 <StatsCards summary={dashboard.summary} />
 
                 <section className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
@@ -255,13 +312,7 @@ const Home = () => {
                   <AIInsights insights={dashboard.aiInsights} />
                 </section>
 
-                <section className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
-                  <SpendingChart analytics={dashboard.analytics} />
-                  <WeeklyQuiz
-                    quiz={dashboard.weeklyQuiz}
-                    onStart={() => setActiveView("quiz")}
-                  />
-                </section>
+                <SpendingChart analytics={dashboard.analytics} />
               </>
             )}
           </>
@@ -290,6 +341,112 @@ const Home = () => {
           {renderContent()}
         </main>
       </SidebarInset>
+
+      {/* Send Money Modal */}
+      {showSendModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setShowSendModal(false)}
+              className="absolute right-4 top-4 rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            >
+              <X className="size-5" />
+            </button>
+
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                <Send className="size-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-950">Send Money</h2>
+                <p className="text-sm text-slate-500">Transfer funds to another account</p>
+              </div>
+            </div>
+
+            {sendSuccess && (
+              <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                {sendSuccess}
+              </div>
+            )}
+            {sendError && (
+              <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+                {sendError}
+              </div>
+            )}
+
+            <form onSubmit={handleSendMoney} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">From Account</label>
+                {userAccounts.length === 0 ? (
+                  <p className="text-sm text-slate-500">No accounts found. Please open an account first.</p>
+                ) : userAccounts.length === 1 ? (
+                  <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">
+                    {userAccounts[0].accountType} — A/C {String(userAccounts[0]._id).slice(-6).toUpperCase()}
+                  </div>
+                ) : (
+                  <select
+                    value={sendForm.FromAccount}
+                    onChange={(e) => setSendForm((prev) => ({ ...prev, FromAccount: e.target.value }))}
+                    required
+                    className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  >
+                    <option value="">Select account</option>
+                    {userAccounts.map((acc) => (
+                      <option key={acc._id} value={acc._id}>
+                        {acc.accountType} — A/C {String(acc._id).slice(-6).toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">To Account ID</label>
+                <input
+                  type="text"
+                  value={sendForm.toAccount}
+                  onChange={(e) => setSendForm((prev) => ({ ...prev, toAccount: e.target.value }))}
+                  required
+                  placeholder="Enter recipient account ID"
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Amount (₹)</label>
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  value={sendForm.amount}
+                  onChange={(e) => setSendForm((prev) => ({ ...prev, amount: e.target.value }))}
+                  required
+                  placeholder="Enter amount"
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSendModal(false)}
+                  className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={sendLoading || userAccounts.length === 0 || !sendForm.FromAccount}
+                  className="flex-1 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {sendLoading ? "Processing..." : "Send Money"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </SidebarProvider>
   );
 };

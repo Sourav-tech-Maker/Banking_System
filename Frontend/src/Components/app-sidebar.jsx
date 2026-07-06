@@ -5,7 +5,6 @@ import {
   ReceiptText,
   ShieldCheck,
   Settings,
-  Trophy,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -45,7 +44,6 @@ export default function AppSidebar({ activeView = "dashboard", onNavigate }) {
     { title: "Transactions", icon: ReceiptText, view: "transactions" },
     { title: "Open Account", icon: Landmark, view: "open-account" },
     { title: "KYC Verification", icon: ShieldCheck, view: "kyc" },
-    { title: "Weekly Tech Quiz", icon: Trophy, view: "quiz" },
     { title: "Profile", icon: User, view: "profile" },
     { title: "Settings", icon: Settings, view: "settings" },
   ];

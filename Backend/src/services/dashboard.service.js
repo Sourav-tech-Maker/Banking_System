@@ -2,7 +2,6 @@ const accountModel = require('../models/account.model')
 const ledgerModel = require('../models/ledger.model')
 const transactionModel = require('../models/transaction.model')
 const kycModel = require('../models/kyc.models')
-const quizAttemptModel = require('../models/quizAttempt.model')
 
 const chartColors = ['#6D5DFB', '#2F80ED', '#22C55E', '#F59E0B', '#EF4444']
 
@@ -110,25 +109,7 @@ async function getDashboardData(user) {
 
     // 6. Calculate nexora coins
     const activeAccounts = accounts.filter(acc => acc.status === 'Active').length
-    const quizCoinAggregation = await quizAttemptModel.aggregate([
-        {
-            $match: {
-                user: user._id,
-                status: 'SUBMITTED'
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                earnedCoins: { $sum: '$earnedCoins' },
-                submittedAttempts: { $sum: 1 }
-            }
-        }
-    ])
-    const quizCoins = quizCoinAggregation[0]?.earnedCoins || 0
-    const quizParticipants = quizCoinAggregation[0]?.submittedAttempts || 0
-    const nexoraCoins = Math.floor(totalBalance / 1000) + activeAccounts * 50 + quizCoins
-    const weeklyEntryFee = 10
+    const nexoraCoins = Math.floor(totalBalance / 1000) + activeAccounts * 50
     const completedTransactionCount = await transactionModel.countDocuments({
         status: 'Completed',
         $or: [
@@ -231,13 +212,6 @@ async function getDashboardData(user) {
                     }
                 ]
                 : []
-        },
-        weeklyQuiz: {
-            title: `Week ${getWeekNumber()} Tech Quiz`,
-            entryFee: weeklyEntryFee,
-            prizePool: Math.max(100, completedTransactionCount * 50),
-            participants: quizParticipants,
-            status: 'ready'
         },
         spendingByCategory: spendingCategories,
         kycDetails: kycRecord ? {

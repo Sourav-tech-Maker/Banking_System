@@ -14,6 +14,7 @@ async function authmiddleware(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, config.JWT_SECRET)
+        
         const user = await userModel.findById(decoded.userid)
 
         if (!user) {
@@ -33,6 +34,7 @@ async function authmiddleware(req, res, next) {
     }
 }
 
+// Rest parameter (...) bundles all specified roles into an array.
 function requireRole(...roles) {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {

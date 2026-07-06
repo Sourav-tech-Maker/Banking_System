@@ -153,7 +153,7 @@ async function createTransaction(req, res) {
      */
 
     const balance = await FromAccountData.getBalance()
-    const isSystemUser = req.user.role === 'systemUser'
+    const isSystemUser = req.user.role === 'systemUser' || req.user.systemUser === true
 
     if (!isSystemUser && balance < amount) {
         return res.status(400).json({
@@ -329,7 +329,6 @@ async function getTransactionHistory(req, res, next) {
         const pageNum = parseInt(page)
         const limitNum = parseInt(limit)
 
-        // 1. Find all accounts belonging to the user
         const accounts = await accountModel.find({ user: req.user._id })
         const accountIds = accounts.map(acc => acc._id)
 

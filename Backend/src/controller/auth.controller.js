@@ -3,12 +3,10 @@ const crypto = require('crypto')
 const userModel = require('../models/user.model')
 const sessionModel = require('../models/session.model')
 const config = require('../config/config')
-const bcrypt = require('bcryptjs');
 const otpModel = require('../models/otp.model')
 const jwt = require('jsonwebtoken')
-const { sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail } = require('../services/email.service')
+const { sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail } = require('../services/email.service')
 const tokenBlackListModel = require('../models/blackList.token.model')
-
 const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
@@ -59,7 +57,7 @@ async function registerUser(req, res, next) {
                 status: "failed"
             })
         }
-        
+
         const user = await userModel.create({
             username,
             email,
@@ -91,8 +89,12 @@ async function registerUser(req, res, next) {
                 role: user.role
             }
         })
+        try {
+            await sendRegistrationEmail(user.email, user.username)
+        } catch (emailError) {
+            console.error("Background welcome email failed to send:", emailError);
+        }
 
-        // await emailService.sendRegistrationEmail(user.email, user.username)
 
     } catch (error) {
         console.error("Register Error:", error);
@@ -101,8 +103,11 @@ async function registerUser(req, res, next) {
 
 }
 
-
-async function verifyOtp(req, res) {
+/**
+ * - Verify OTP Controller
+ * - POST /api/auth/verify-otp
+ */
+async function verifyOtp(req, res, next) {
     try {
         const { email, otp } = req.body || {};
 
@@ -144,8 +149,9 @@ async function verifyOtp(req, res) {
             message: "Email verified successfully",
         });
     } catch (error) {
-        console.error(error);
+        console.error("OTP Verification Error:", error);
         return res.status(500).json({ message: "Internal Server Error" });
+        next(error)
     }
 }
 
@@ -165,7 +171,7 @@ async function loginUser(req, res, next) {
             });
         }
 
-        const user = await userModel.findOne({ email }).select("+password +systemUser")
+        const user = await userModel.findOne({ email }).select("+password +systemUser ")
         if (!user) {
             return res.status(401).json({
                 message: "Email or Password is INVALID"
@@ -209,17 +215,17 @@ async function loginUser(req, res, next) {
         }
 
         let actualRole = user.role;
-        if (user.systemUser) {
+        if (user.systemUser === true || user.system_user === true || user.role === 'systemUser') {
             actualRole = 'systemUser';
         }
-
+         
         if (actualRole !== requestedRole) {
             return res.status(403).json({
                 message: "Selected role does not match this account."
             });
         }
 
-        if (requestedRole !== 'user') {
+        if (requestedRole === 'admin' || requestedRole === 'systemUser') {
             const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
 
             if (!rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {
@@ -235,7 +241,7 @@ async function loginUser(req, res, next) {
 
         const accessToken = jwt.sign({
             userid: user._id,
-            role: user.role,
+            role: actualRole,
         }, config.JWT_SECRET, { expiresIn: "15m" })
 
         const refreshToken = jwt.sign({
@@ -250,7 +256,8 @@ async function loginUser(req, res, next) {
             userAgent: req.headers["user-agent"]
         });
 
-        if (!existingSession) { await sendNewDeviceLoginEmail( user.email, user.username);
+        if (!existingSession) {
+            await sendNewDeviceLoginEmail(user.email, user.username);
         }
 
         await sessionModel.create({
@@ -260,7 +267,7 @@ async function loginUser(req, res, next) {
             userAgent: req.headers['user-agent'] || "Unknown Device",
             expiresAt: sessionExpiry
         })
-        // Secure cookies
+        
         res.cookie("token", accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -285,6 +292,59 @@ async function loginUser(req, res, next) {
         })
     } catch (error) {
         next(error)
+    }
+}
+
+
+/**
+ * - Silent Token Refresh Controller
+ * - POST /api/auth/refresh-token
+ */
+
+async function refreshAccessToken(req, res, next) {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Refresh token is missing" });
+        }
+
+        const hashedRefreshToken = hashToken(refreshToken);
+        const session = await sessionModel.findOne({ refreshTokenHash: hashedRefreshToken, revoked: false });
+
+        if (!session || session.expiresAt < new Date()) {
+            return res.status(401).json({ message: "Session expired or invalid" });
+        }
+
+        const decoded = jwt.verify(refreshToken, config.JWT_SECRET);
+        const user = await userModel.findById(decoded.userid).select("+systemUser +system_user");
+
+        if (!user || user.status !== "Active") {
+            return res.status(401).json({ message: "User account unavailable" });
+        }
+
+        let actualRole = user.role;
+        if (user.systemUser === true || user.role === 'systemUser') {
+            actualRole = 'systemUser';
+        }
+
+        const newAccessToken = jwt.sign({
+            userid: user._id,
+            role: actualRole,
+        }, config.JWT_SECRET, { expiresIn: "15m" });
+
+        res.cookie("token", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000
+        });
+
+        return res.status(200).json({
+            message: "Token rotated successfully",
+            accessToken: newAccessToken
+        });
+    } catch (error) {
+        return res.status(401).json({ message: "Session verification failed" });
     }
 }
 
@@ -326,4 +386,4 @@ async function logoutUser(req, res, next) {
     }
 }
 
-module.exports = { registerUser, verifyOtp, loginUser, logoutUser }
+module.exports = { registerUser, verifyOtp, loginUser, refreshAccessToken, logoutUser }

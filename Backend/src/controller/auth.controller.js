@@ -130,8 +130,6 @@ async function verifyOtp(req, res, next) {
                 message: "Invalid or expired OTP",
             });
         }
-
-
         if (otpRecord.expiresAt < new Date()) {
             return res.status(400).json({
                 message: "OTP has expired. Please request a new one.",
@@ -154,7 +152,6 @@ async function verifyOtp(req, res, next) {
         next(error)
     }
 }
-
 /**
  *  - User Login Controller
  *  - Post /api/auth/login
@@ -163,19 +160,39 @@ async function loginUser(req, res, next) {
     try {
         const { email, password, role, roleAccessKey } = req.body
         const allowedRoles = ['user', 'admin', 'systemUser']
-        const requestedRole = allowedRoles.includes(role) ? role : 'user'
+        const selectedDropdownRole = allowedRoles.includes(role) ? role : 'user'
 
-        if (!email || !password || (requestedRole !== 'user' && !roleAccessKey)) {
+        if (!email || !password) {
             return res.status(400).json({
-                message: "Email, password, and RoleAccessKey are required"
+                message: "Email and password are required"
             });
         }
-
-        const user = await userModel.findOne({ email }).select("+password +systemUser ")
+        const user = await userModel.findOne({ email }).select("+password +systemUser +role")
         if (!user) {
             return res.status(401).json({
                 message: "Email or Password is INVALID"
             })
+        }
+
+        const isSystemUser = user.role === 'systemUser' || user.systemUser === true;
+        const isAdmin = user.role === 'admin';
+        const databaseRole = isSystemUser ? 'systemUser' : (isAdmin ? 'admin' : 'user');
+
+   
+        if (selectedDropdownRole !== databaseRole) {
+            return res.status(403).json({
+                message: `Invalid role selected for this account. Please select the correct role from the dropdown.`
+            });
+        }
+
+   
+        if (databaseRole === 'admin' || databaseRole === 'systemUser') {
+            const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
+            if (!roleAccessKey || !rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {
+                return res.status(403).json({
+                    message: "A valid RBAC registration key is required for admin or system user Login."
+                })
+            }
         }
 
         if (!user.verified) {
@@ -214,34 +231,13 @@ async function loginUser(req, res, next) {
             })
         }
 
-        let actualRole = user.role;
-        if (user.systemUser === true || user.system_user === true || user.role === 'systemUser') {
-            actualRole = 'systemUser';
-        }
-         
-        if (actualRole !== requestedRole) {
-            return res.status(403).json({
-                message: "Selected role does not match this account."
-            });
-        }
-
-        if (requestedRole === 'admin' || requestedRole === 'systemUser') {
-            const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
-
-            if (!rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {
-                return res.status(403).json({
-                    message: "A valid RBAC registration key is required for admin or system user Login."
-                })
-            }
-        }
-
         user.loginAttempts = 0;
         user.lockUntil = undefined;
         await user.save();
 
         const accessToken = jwt.sign({
             userid: user._id,
-            role: actualRole,
+            role: databaseRole,
         }, config.JWT_SECRET, { expiresIn: "15m" })
 
         const refreshToken = jwt.sign({
@@ -272,7 +268,7 @@ async function loginUser(req, res, next) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 15 * 60 * 1000 // 15 minutes (matches JWT expiry)
+            maxAge: 15 * 60 * 1000 
         })
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
@@ -286,7 +282,7 @@ async function loginUser(req, res, next) {
                 id: user._id,
                 username: user.username,
                 email: user.email,
-                role: user.role
+                role: databaseRole
             },
             accessToken
         })
@@ -294,7 +290,6 @@ async function loginUser(req, res, next) {
         next(error)
     }
 }
-
 
 /**
  * - Silent Token Refresh Controller

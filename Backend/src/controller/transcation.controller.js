@@ -88,8 +88,6 @@ async function createTransaction(req, res) {
             message: "FromAccount or toAccount are not found!..."
         })
     }
-
-    // Verify the sender account belongs to the currently logged-in user
     if (!accountBelongsToUser(FromAccountData, req.user._id)) {
         return res.status(403).json({
             message: "You are not authorized to transfer from this account",
@@ -97,8 +95,10 @@ async function createTransaction(req, res) {
         })
     }
 
-    // Check KYC on the actual sender account document
-    if (!FromAccountData.isKycVerified) {
+    const isSystemUser = req.user.role === 'systemUser' || req.user.systemUser === true || FromAccountData.systemUser === true
+
+    // Check KYC on the actual sender account document (skip for system users)
+    if (!isSystemUser && !FromAccountData.isKycVerified) {
         return res.status(403).json({
             message: "You don't have access to creating Transaction. KYC is not verified.",
             status: 'failed'
@@ -149,16 +149,16 @@ async function createTransaction(req, res) {
     }
 
     /**
-     * 4. Derive sender balance from ledger 
+     * 4. Derive sender balance from ledger (skip for system users)
      */
 
-    const balance = await FromAccountData.getBalance()
-    const isSystemUser = req.user.role === 'systemUser' || req.user.systemUser === true
-
-    if (!isSystemUser && balance < amount) {
-        return res.status(400).json({
-            message: `Insufficient balance to process transcation Current balance is ${balance}. Required balance is ${amount}`
-        })
+    if (!isSystemUser) {
+        const balance = await FromAccountData.getBalance()
+        if (balance < amount) {
+            return res.status(400).json({
+                message: `Insufficient balance to process transcation Current balance is ${balance}. Required balance is ${amount}`
+            })
+        }
     }
 
     /**
@@ -180,7 +180,6 @@ async function createTransaction(req, res) {
             idempotencyKey,
             status: 'Pending'
         }], { session }))[0]
-        // transaction = createdTransaction
 
         const debitLedgerEntry = await ledgerModel.create([{
             account: FromAccount,
@@ -196,7 +195,6 @@ async function createTransaction(req, res) {
             type: 'Credit'
         }], { session })
 
-        // update transaction status to COMPLETED
         await transactionModel.findOneAndUpdate(
             {_id: transaction._id},
             {status: 'Completed'},
@@ -268,13 +266,22 @@ async function createInitialFundsTransaction(req, res) {
 
     const toUserAccount = await accountModel.findOne({ _id: toAccount })
 
+
     if (!toUserAccount) {
         return res.status(404).json({
             message: "toAccount not found"
         })
     }
 
+
     const fromUserAccountData = await accountModel.findOne({  user: req.user._id })
+    const allowedRoles = ['user', 'admin', 'systemUser']
+     const requestedRole = allowedRoles.includes(role) ? role : 'user'
+     if (allowedRoles !== requestedRole) {
+            return res.status(403).json({
+                message: "Selected role does not match this account."
+            });
+        }
 
     if (!fromUserAccountData) {
         return res.status(404).json({

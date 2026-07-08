@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Canvas } from '@react-three/fiber'
 import { Volume2, VolumeX, ArrowRight } from 'lucide-react'
 import gsap from 'gsap'
@@ -7,13 +7,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import SceneManager from './SceneManager'
 import SmoothScroll from './SmoothScroll'
-import { SCENE_RANGES, TOTAL_SCROLL_SECTIONS } from './utils/constants'
+import { SCENE_RANGES } from './utils/constants'
 import './NexoraLanding.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function NexoraLanding() {
-  const navigate = useNavigate()
+export default function ONEOBankLanding() {
   const triggerRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [activeScene, setActiveScene] = useState('loading')
@@ -73,7 +72,7 @@ export default function NexoraLanding() {
   }, [loadingComplete])
 
   // Play procedural UI sound using Web Audio API
-  const playBeep = (freq, duration, type = 'sine') => {
+  const playBeep = useCallback((freq, duration, type = 'sine') => {
     if (!audioEnabled) return
     try {
       if (!audioContextRef.current) {
@@ -100,7 +99,7 @@ export default function NexoraLanding() {
     } catch (e) {
       console.warn('Audio play failed:', e)
     }
-  }
+  }, [audioEnabled])
 
   // Play sound when active scene changes
   useEffect(() => {
@@ -116,7 +115,7 @@ export default function NexoraLanding() {
     if (activeScene === 'quiz') playBeep(783.99, 0.3, 'sine')
     if (activeScene === 'coins') playBeep(880.00, 0.5, 'sine')
     if (activeScene === 'finalReveal') playBeep(987.77, 0.8, 'sine')
-  }, [activeScene, audioEnabled])
+  }, [activeScene, audioEnabled, playBeep])
 
   const toggleAudio = () => {
     setAudioEnabled(!audioEnabled)
@@ -130,7 +129,7 @@ export default function NexoraLanding() {
       {/* Loading Overlay */}
       {!loadingComplete && (
         <div className="loading-overlay">
-          <div className="loading-logo font-bold uppercase tracking-widest">NEXORA</div>
+          <div className="loading-logo font-bold uppercase tracking-widest">ONEO Bank</div>
           <div className="loading-progress-container">
             <div className="loading-progress-bar" style={{ width: `${loadProgress}%` }} />
           </div>
@@ -139,7 +138,7 @@ export default function NexoraLanding() {
       )}
 
       {/* Main Container */}
-      <div className="nexora-landing-container" ref={triggerRef}>
+      <div className="oneo-bank-landing-container" ref={triggerRef}>
         {/* Fixed WebGL Canvas */}
         <div className="canvas-container">
           <Canvas
@@ -171,7 +170,7 @@ export default function NexoraLanding() {
           {/* Section 1: Loading */}
           <section className="scroll-section">
             <div className={`overlay-content ${activeScene === 'loading' ? 'active' : ''}`}>
-              <h1 className="overlay-title">Initializing NEXORA AI</h1>
+              <h1 className="overlay-title">Initializing ONEO Bank AI</h1>
               <p className="overlay-subtitle">Activating biometric protocols and neural core links.</p>
             </div>
           </section>
@@ -259,7 +258,7 @@ export default function NexoraLanding() {
           {/* Section 12: Final Reveal */}
           <section className="scroll-section">
             <div className={`overlay-content ${activeScene === 'finalReveal' ? 'active' : ''}`}>
-              <h1 className="overlay-title">NEXORA</h1>
+              <h1 className="overlay-title">ONEO Bank</h1>
               <p className="overlay-subtitle">One Platform. Infinite Intelligence.</p>
               <Link to="/register" className="overlay-cta-btn gap-2 font-bold">
                 Get Started <ArrowRight className="size-5" />

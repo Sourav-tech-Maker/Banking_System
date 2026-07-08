@@ -163,7 +163,7 @@ export default function ProfileView() {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-950">Accounts</h3>
-              <p className="text-sm text-slate-500">Linked Nexora bank accounts</p>
+              <p className="text-sm text-slate-500">Linked ONEO Bank bank accounts</p>
             </div>
           </div>
 

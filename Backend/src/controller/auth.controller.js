@@ -160,7 +160,7 @@ async function loginUser(req, res, next) {
     try {
         const { email, password, role, roleAccessKey } = req.body
         const allowedRoles = ['user', 'admin', 'systemUser']
-        const selectedDropdownRole = allowedRoles.includes(role) ? role : 'user'
+        const requestedRole = allowedRoles.includes(role) ? role : 'user'
 
         if (!email || !password) {
             return res.status(400).json({
@@ -179,13 +179,12 @@ async function loginUser(req, res, next) {
         const databaseRole = isSystemUser ? 'systemUser' : (isAdmin ? 'admin' : 'user');
 
    
-        if (selectedDropdownRole !== databaseRole) {
+        if (requestedRole !== databaseRole) {
             return res.status(403).json({
                 message: `Invalid role selected for this account. Please select the correct role from the dropdown.`
             });
         }
 
-   
         if (databaseRole === 'admin' || databaseRole === 'systemUser') {
             const rbacRegistrationKey = config.RBAC_REGISTRATION_KEY
             if (!roleAccessKey || !rbacRegistrationKey || roleAccessKey !== rbacRegistrationKey) {

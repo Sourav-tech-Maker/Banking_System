@@ -19,7 +19,6 @@ import {
   Search,
   Settings,
   ShieldCheck,
-  Sparkles,
   Trash2,
   TrendingUp,
   User,
@@ -288,7 +287,7 @@ export default function AdminPanel() {
       items: ["Fraud alerts", "Risk score", "Suspicious login", "Investigation"],
     },
     {
-      title: "NEXORA Coins",
+      title: "ONEO Bank Coins",
       status: "Planned",
       icon: Coins,
       text: "Coin balances, redemption approvals, and reward history.",
@@ -469,7 +468,7 @@ export default function AdminPanel() {
     <div className="space-y-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">NEXORA Back Office</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">ONEO Bank Back Office</p>
           <h2 className="mt-1 text-2xl font-bold text-slate-950">Admin Control Panel</h2>
           <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500">
             Manage users, verify KYC documents, monitor platform activity, and prepare the next admin modules.
@@ -560,11 +559,10 @@ export default function AdminPanel() {
           { id: "reports", label: "Reports & Settings" },
         ].map((tab) => (
           <button
-            className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              activeTab === tab.id
+            className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition ${activeTab === tab.id
                 ? "border-indigo-600 text-indigo-600"
                 : "border-transparent text-slate-500 hover:text-slate-900"
-            }`}
+              }`}
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             type="button"
@@ -936,12 +934,11 @@ export default function AdminPanel() {
                           {currencyFormatter.format(txn.amount)}
                         </td>
                         <td className="p-3">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${
-                            txn.status === "Completed" ? "bg-emerald-50 text-emerald-700 ring-emerald-200" :
-                            txn.status === "Pending" ? "bg-amber-50 text-amber-700 ring-amber-200" :
-                            txn.status === "Reversed" ? "bg-violet-50 text-violet-700 ring-violet-200" :
-                            "bg-rose-50 text-rose-700 ring-rose-200"
-                          }`}>
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${txn.status === "Completed" ? "bg-emerald-50 text-emerald-700 ring-emerald-200" :
+                              txn.status === "Pending" ? "bg-amber-50 text-amber-700 ring-amber-200" :
+                                txn.status === "Reversed" ? "bg-violet-50 text-violet-700 ring-violet-200" :
+                                  "bg-rose-50 text-rose-700 ring-rose-200"
+                            }`}>
                             {txn.status}
                           </span>
                         </td>
@@ -1033,9 +1030,9 @@ export default function AdminPanel() {
               Write the reason so the user knows what needs to be fixed.
             </p>
 
-            <textarea  className="mt-4 w-full rounded-lg border border-slate-200 p-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-             onChange={(e) => setRejectReason(e.target.value)} 
-            placeholder="Example: Document name does not match account name."
+            <textarea className="mt-4 w-full rounded-lg border border-slate-200 p-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Example: Document name does not match account name."
               rows="3"
               value={rejectReason}
             />

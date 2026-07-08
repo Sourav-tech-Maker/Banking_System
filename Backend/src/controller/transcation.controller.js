@@ -97,7 +97,6 @@ async function createTransaction(req, res) {
 
     const isSystemUser = req.user.role === 'systemUser' || req.user.systemUser === true || FromAccountData.systemUser === true
 
-    // Check KYC on the actual sender account document (skip for system users)
     if (!isSystemUser && !FromAccountData.isKycVerified) {
         return res.status(403).json({
             message: "You don't have access to creating Transaction. KYC is not verified.",

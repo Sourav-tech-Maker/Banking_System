@@ -29,7 +29,7 @@ const beneficiarySchema = new mongoose.Schema({
 
     bankName: {
         type: String,
-        default: "Nexora"
+        default: "ONEO Bank"
     },
     accountType: {
         type: String,

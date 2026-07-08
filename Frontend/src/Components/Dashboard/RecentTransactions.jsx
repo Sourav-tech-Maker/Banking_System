@@ -57,7 +57,7 @@ function getCounterparty(transaction) {
     return transaction.otherAccount;
   }
 
-  return "Nexora account";
+  return "ONEO Bank account";
 }
 
 export default function RecentTransactions({ transactions = [], onViewAll }) {

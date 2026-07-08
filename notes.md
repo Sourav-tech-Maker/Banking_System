@@ -68,7 +68,7 @@ Other standard HTTP prefixes exist for different use cases:
 | :--- | :--- |
 | **`Basic`** | Used for Base64-encoded username and password pairs. |
 | **`ApiKey`** | Used for static, server-to-server security keys. |
-| **`Custom`** | Used for proprietary platform tokens (e.g., `NexoraToken`). |
+| **`Custom`** | Used for proprietary platform tokens (e.g., `ONEO BankToken`). |
 
 # Understanding Morgan Middleware in Node.js
 

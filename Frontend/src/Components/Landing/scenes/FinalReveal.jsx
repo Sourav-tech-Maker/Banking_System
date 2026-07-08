@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
 import AICore from '../objects/AICore'
-import NexoraCoin from '../objects/NexoraCoin'
+import ONEOBankCoin from '../objects/NexoraCoin'
 import ParticleField from '../effects/ParticleField'
 import HolographicText from '../effects/HolographicText'
 import EnergyBeam from '../effects/EnergyBeam'
@@ -34,7 +34,7 @@ export default function FinalReveal({ progress = 0, visible = true }) {
           const angle = (i / 6) * Math.PI * 2
           const radius = 3 + Math.sin(i) * 0.5
           return (
-            <NexoraCoin
+            <ONEOBankCoin
               key={`coin-${i}`}
               position={[
                 Math.cos(angle) * radius,
@@ -89,7 +89,7 @@ export default function FinalReveal({ progress = 0, visible = true }) {
 
       {/* Final text */}
       <HolographicText position={[0, 4, 0]} fontSize={0.8} color="#ffffff" opacity={textProgress}>
-        NEXORA
+        ONEO Bank
       </HolographicText>
       <HolographicText position={[0, 3, 0]} fontSize={0.2} color="#94a3b8" opacity={textProgress * 0.9}>
         One Platform. Infinite Intelligence.

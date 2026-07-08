@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import HolographicText from '../effects/HolographicText'
 import ParticleField from '../effects/ParticleField'
-import NexoraCoin from '../objects/NexoraCoin'
+import ONEOBankCoin from '../objects/NexoraCoin'
 
 export default function QuizArena({ progress = 0, visible = true }) {
   const platformRef = useRef()
@@ -61,7 +61,7 @@ export default function QuizArena({ progress = 0, visible = true }) {
             Weekly Tech Quiz
           </HolographicText>
           <HolographicText position={[0, 1.4, 0]} fontSize={0.12} color="#94a3b8" opacity={Math.min(1, (progress - 0.35) / 0.2)}>
-            Test your knowledge. Earn NEXORA Coins.
+            Test your knowledge. Earn ONEO Bank Coins.
           </HolographicText>
 
           {/* Timer circle */}
@@ -84,7 +84,7 @@ export default function QuizArena({ progress = 0, visible = true }) {
             const angle = (i / 8) * Math.PI * 2
             const radius = 2 + (progress - 0.7) * 5
             return (
-              <NexoraCoin
+              <ONEOBankCoin
                 key={i}
                 position={[
                   Math.cos(angle) * radius,

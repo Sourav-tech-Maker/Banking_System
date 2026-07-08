@@ -1,5 +1,5 @@
 const Footer = () => {
-     const footerNavs = [
+    const footerNavs = [
         {
             label: "Resources",
             items: [
@@ -81,8 +81,8 @@ const Footer = () => {
             ],
         }
     ]
-  return (
-    <footer className="pt-10 bg-gray-800">
+    return (
+        <footer className="pt-10 bg-gray-800">
             <div className="max-w-screen-xl mx-auto px-4 md:px-8">
                 <div className="justify-between items-center gap-12 md:flex">
                     <div className="flex-1 max-w-lg">
@@ -137,7 +137,7 @@ const Footer = () => {
                     }
                 </div>
                 <div className="mt-10 py-10 border-t border-gray-700 items-center justify-between sm:flex">
-                    <p className="text-gray-300">&copy; 2026 NEXORA All rights reserved.</p>
+                    <p className="text-gray-300">&copy; 2026 ONEO Bank All rights reserved.</p>
                     <div className="flex items-center gap-x-6 text-gray-400 mt-6">
                         <a href="javascript:void()">
                             <svg className="w-6 h-6 hover:text-gray-500 duration-150" fill="none" viewBox="0 0 48 48"><g clip-path="url(#a)"><path fill="currentColor" d="M48 24C48 10.745 37.255 0 24 0S0 10.745 0 24c0 11.979 8.776 21.908 20.25 23.708v-16.77h-6.094V24h6.094v-5.288c0-6.014 3.583-9.337 9.065-9.337 2.625 0 5.372.469 5.372.469v5.906h-3.026c-2.981 0-3.911 1.85-3.911 3.75V24h6.656l-1.064 6.938H27.75v16.77C39.224 45.908 48 35.978 48 24z" /></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h48v48H0z" /></clipPath></defs></svg>
@@ -155,7 +155,7 @@ const Footer = () => {
                 </div>
             </div>
         </footer>
-  )
+    )
 }
 
 export default Footer

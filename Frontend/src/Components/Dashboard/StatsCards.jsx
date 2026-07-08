@@ -78,8 +78,8 @@ export default function StatsCards({ summary }) {
     },
     {
       key: "coins",
-      title: "Nexora Coins",
-      value: numberFormatter.format(summary.nexoraCoins || 0),
+      title: "ONEO Bank Coins",
+      value: numberFormatter.format(summary.ONEO_BankCoins || 0),
       detail: `${numberFormatter.format(summary.coinsChange || 0)} earned this week`,
       change: summary.coinsChange ? 100 : 0,
       isCoinCard: true,

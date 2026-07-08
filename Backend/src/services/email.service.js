@@ -2,23 +2,23 @@ const nodemailer = require('nodemailer');
 const config = require('../config/config')
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    type: 'OAuth2',
-    user: process.env.EMAIL_USER,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    refreshToken: process.env.REFRESH_TOKEN,
-  },
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: process.env.EMAIL_USER,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+    },
 });
 
 // Verify the connection configuration
 transporter.verify((error, success) => {
-  if (error) {
-    console.error('Error connecting to email server:', error);
-  } else {
-    console.log('Email server is ready to send messages');
-  }
+    if (error) {
+        console.error('Error connecting to email server:', error);
+    } else {
+        console.log('Email server is ready to send messages');
+    }
 });
 
 
@@ -26,20 +26,20 @@ transporter.verify((error, success) => {
 
 // Function to send email
 async function sendEmail(to, subject, text, html) {
-  try {
-    const info = await transporter.sendMail({
-      from: `"Nexora" <${config.EMAIL_USER}>`,
-      to, 
-      subject, 
-      text, 
-      html, 
-    });
+    try {
+        const info = await transporter.sendMail({
+            from: `"ONEO Bank" <${config.EMAIL_USER}>`,
+            to,
+            subject,
+            text,
+            html,
+        });
 
-    console.log('Message sent: %s', info.messageId);
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
 }
 // New Device LoginEmail
 
@@ -61,18 +61,18 @@ If this wasn't you, please change your password immediately.
 Regards,
 Secure Bank Team
 `;
-    return sendEmail( email, "New Device Login Detected", text,html);
+    return sendEmail(email, "New Device Login Detected", text, html);
 }
 
 
 
 async function sendRegistrationEmail(userEmail, name) {
-  const subject = "Welcome to Nexora - Account Registration Successful";
+    const subject = "Welcome to ONEO Bank - Account Registration Successful";
 
-  const text = `
+    const text = `
 Dear ${name},
 
-Welcome to Nexora.
+Welcome to ONEO Bank.
 
 Your account has been successfully registered and is now ready to use.
 
@@ -81,24 +81,24 @@ For your security:
 • Always verify the website before logging in.
 • Contact support immediately if you notice suspicious activity.
 
-Thank you for choosing Nexora.
+Thank you for choosing ONEO Bank.
 
 Regards,
-Nexora Team
+ONEO Bank Team
 `;
 
-  const html = `
+    const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
         
         <div style="background: #1e40af; color: white; padding: 20px; text-align: center;">
-            <h2>🏦 Nexora</h2>
+            <h2>🏦 ONEO Bank</h2>
         </div>
 
         <div style="padding: 25px;">
             <h3>Hello ${name},</h3>
 
             <p>
-                Welcome to <strong>Nexora</strong>.
+                Welcome to <strong>ONEO Bank</strong>.
                 Your account has been successfully registered and is now ready to use.
             </p>
 
@@ -117,30 +117,31 @@ Nexora Team
 
             <p>
                 Regards,<br>
-                <strong>Nexora Team</strong>
+                <strong>ONEO Bank Team</strong>
             </p>
         </div>
 
         <div style="background: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #6b7280;">
-            © 2026 Nexora. All Rights Reserved.<br>
+            © 2026 ONEO Bank. All Rights Reserved.<br>
             This is an automated email. Please do not reply.
         </div>
 
     </div>
     `;
 
-  await sendEmail(userEmail, subject, text, html);
+    await sendEmail(userEmail, subject, text, html);
 }
 
 async function sendTransactionEmail(
-  userEmail,
-  name,
-  amount,
-  toAccount,
-  transactionDetails
-) { const subject = "Transaction Successful";
+    userEmail,
+    name,
+    amount,
+    toAccount,
+    transactionDetails
+) {
+    const subject = "Transaction Successful";
 
-  const text = `Hello ${name},
+    const text = `Hello ${name},
 
 Your transaction has been completed successfully.
 
@@ -152,7 +153,7 @@ ${transactionDetails}
 Thank you for banking with us.
 `;
 
-  const html = `
+    const html = `
     <div style="
         max-width:600px;
         margin:auto;
@@ -251,22 +252,22 @@ Thank you for banking with us.
     </div>
     `;
 
-  await sendEmail(userEmail, subject, text, html);
+    await sendEmail(userEmail, subject, text, html);
 }
 
 async function sendTransactionFailureEmail(userEmail, name, amount, toAccount, transactionDetails) {
-  const subject = "Transaction Failure Notification";
-  const text = `Hi ${name},\n\nWe regret to inform you that a transaction of $${amount} to account ${toAccount} has failed.\n\nTransaction Details:\n${transactionDetails}\n\nPlease check your account and try again. If you have any questions, feel free to contact our support team.\n\nBest regards,\nNexora Team`;
-  const html = `<p>Hi ${name},</p><p>We regret to inform you that a transaction of <strong>$${amount}</strong> to account <strong>${toAccount}</strong> has failed.</p><p><strong>Transaction Details:</strong></p><pre>${transactionDetails}</pre><p>Please check your account and try again. If you have any questions, feel free to contact our support team.</p><p>Best regards,<br/>Nexora Team</p>`;
-  await sendEmail(userEmail, subject, text, html);
+    const subject = "Transaction Failure Notification";
+    const text = `Hi ${name},\n\nWe regret to inform you that a transaction of $${amount} to account ${toAccount} has failed.\n\nTransaction Details:\n${transactionDetails}\n\nPlease check your account and try again. If you have any questions, feel free to contact our support team.\n\nBest regards,\nONEO Bank Team`;
+    const html = `<p>Hi ${name},</p><p>We regret to inform you that a transaction of <strong>$${amount}</strong> to account <strong>${toAccount}</strong> has failed.</p><p><strong>Transaction Details:</strong></p><pre>${transactionDetails}</pre><p>Please check your account and try again. If you have any questions, feel free to contact our support team.</p><p>Best regards,<br/>ONEO Bank Team</p>`;
+    await sendEmail(userEmail, subject, text, html);
 }
 
 async function sendPasswordResetEmail(userEmail, name, resetLink) {
-  const subject = "Password Reset Request";
-  const text = `Hi ${name},\n\nWe received a request to reset your password. Please click the link below to reset your password:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nNexora Team`;
-  const html = `<p>Hi ${name},</p><p>We received a request to reset your password. Please click the link below to reset your password:</p><p><a href="${resetLink}">Reset Password</a></p><p>If you did not request a password reset, please ignore this email.</p><p>Best regards,<br/>Nexora Team</p>`;
-  await sendEmail(userEmail, subject, text, html);
+    const subject = "Password Reset Request";
+    const text = `Hi ${name},\n\nWe received a request to reset your password. Please click the link below to reset your password:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nONEO Bank Team`;
+    const html = `<p>Hi ${name},</p><p>We received a request to reset your password. Please click the link below to reset your password:</p><p><a href="${resetLink}">Reset Password</a></p><p>If you did not request a password reset, please ignore this email.</p><p>Best regards,<br/>ONEO Bank Team</p>`;
+    await sendEmail(userEmail, subject, text, html);
 }
 
 
-module.exports = {sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };
+module.exports = { sendEmail, sendNewDeviceLoginEmail, sendRegistrationEmail, sendTransactionEmail, sendTransactionFailureEmail, sendPasswordResetEmail };

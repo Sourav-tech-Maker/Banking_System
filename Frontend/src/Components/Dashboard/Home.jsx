@@ -29,7 +29,7 @@ const emptyDashboard = {
     totalBalance: 0,
     totalIncome: 0,
     totalExpense: 0,
-    nexoraCoins: 0,
+    ONEO_BankCoins: 0,
     totalAccounts: 0,
     notificationCount: 0,
     balanceChange: 0,
@@ -44,7 +44,7 @@ const emptyDashboard = {
   },
   aiInsights: {
     headline: "Your activity is ready to grow",
-    message: "Live insights appear as your Nexora account activity grows.",
+    message: "Live insights appear as your ONEO Bank account activity grows.",
     savingsPotential: 0,
     items: [],
   },
@@ -52,7 +52,7 @@ const emptyDashboard = {
 
 function readStoredUser() {
   try {
-    return JSON.parse(sessionStorage.getItem("nexoraUser")) || {};
+    return JSON.parse(sessionStorage.getItem("ONEO BankUser")) || {};
   } catch {
     return {};
   }
@@ -222,7 +222,7 @@ const Home = () => {
           summary: {
             totalBalance,
             totalAccounts: accounts.length,
-            nexoraCoins: Math.floor(totalBalance / 1000) + activeAccounts * 50,
+            ONEO_BankCoins: Math.floor(totalBalance / 1000) + activeAccounts * 50,
             notificationCount: accounts.length === 0 ? 1 : 0,
           },
           aiInsights: {

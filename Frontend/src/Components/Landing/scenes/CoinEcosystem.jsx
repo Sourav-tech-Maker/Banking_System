@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import NexoraCoin from '../objects/NexoraCoin'
+import ONEOBankCoin from '../objects/NexoraCoin'
 import EnergyBeam from '../effects/EnergyBeam'
 import ParticleField from '../effects/ParticleField'
 import HolographicText from '../effects/HolographicText'
@@ -48,7 +48,7 @@ export default function CoinEcosystem({ progress = 0, visible = true }) {
         const currentRadius = coin.startRadius * (1 - progress * 0.8)
         const currentAngle = coin.angle + progress * Math.PI * 4
         return (
-          <NexoraCoin
+          <ONEOBankCoin
             key={i}
             position={[
               Math.cos(currentAngle) * currentRadius,
@@ -82,10 +82,10 @@ export default function CoinEcosystem({ progress = 0, visible = true }) {
       })}
 
       <HolographicText position={[0, 3.5, 0]} fontSize={0.25} color="#f59e0b" opacity={progress}>
-        NEXORA Coin Ecosystem
+        ONEO Bank Coin Ecosystem
       </HolographicText>
       <HolographicText position={[0, 2.8, 0]} fontSize={0.12} color="#94a3b8" opacity={progress * 0.8}>
-        Rewards flow into the NEXORA ecosystem
+        Rewards flow into the ONEO Bank ecosystem
       </HolographicText>
 
       <ParticleField count={100} color="#f59e0b" size={0.02} area={15} speed={0.3} opacity={0.4} />

@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 
-export default function NexoraCoin({ position = [0, 0, 0], scale = 1, spinning = true }) {
+export default function ONEOBankCoin({ position =[0, 0, 0], scale = 1, spinning = true }) {
   const coinRef = useRef()
 
   useFrame((state) => {

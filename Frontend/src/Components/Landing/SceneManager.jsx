@@ -19,7 +19,6 @@ import CoinEcosystem from './scenes/CoinEcosystem'
 import FinalReveal from './scenes/FinalReveal'
 
 // Postprocessing
-import PostProcessingEffects from './effects/PostProcessing'
 
 export default function SceneManager({ scrollProgress }) {
   const { camera } = useThree()
@@ -32,7 +31,7 @@ export default function SceneManager({ scrollProgress }) {
     camera.lookAt(getCameraLookAt(0))
   }, [camera])
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     // 1. Smoothly interpolate camera position along path
     const targetPos = getCameraPosition(scrollProgress)
     camera.position.lerp(targetPos, 0.1)

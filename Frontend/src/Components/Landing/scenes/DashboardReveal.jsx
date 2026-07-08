@@ -59,7 +59,7 @@ export default function DashboardReveal({ progress = 0, visible = true }) {
     { title: 'Monthly Spending', value: '₹1,23,450', color: '#f43f5e', start: [8, 0, -3], end: [2.5, 1.5, -0.5], delay: 0.1 },
     { title: 'Savings Goal', value: '78% Complete', color: '#10b981', start: [-8, -2, -4], end: [-2.5, -0.5, 0], delay: 0.2 },
     { title: 'AI Insights', value: '3 New Tips', color: '#8b5cf6', start: [0, -8, -6], end: [2.5, -0.5, -0.5], delay: 0.3 },
-    { title: 'NEXORA Coins', value: '2,450 NC', color: '#f59e0b', start: [-6, 5, -3], end: [0, -2.5, -0.3], delay: 0.4 },
+    { title: 'ONEO Bank Coins', value: '2,450 NC', color: '#f59e0b', start: [-6, 5, -3], end: [0, -2.5, -0.3], delay: 0.4 },
     { title: 'Credit Score', value: '850 / 900', color: '#00f0ff', start: [6, -5, -4], end: [0, 3.5, -0.3], delay: 0.5 },
   ]
 

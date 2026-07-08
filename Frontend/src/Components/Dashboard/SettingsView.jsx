@@ -52,7 +52,7 @@ export default function SettingsView() {
       <div>
         <h2 className="text-xl font-bold text-slate-950">Settings</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Manage preferences for your Nexora banking experience.
+          Manage preferences for your ONEO Bank banking experience.
         </p>
       </div>
 
@@ -82,16 +82,14 @@ export default function SettingsView() {
 
               <button
                 aria-pressed={values[item.key]}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition ${
-                  values[item.key] ? "bg-indigo-600" : "bg-slate-300"
-                }`}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition ${values[item.key] ? "bg-indigo-600" : "bg-slate-300"
+                  }`}
                 onClick={() => toggle(item.key)}
                 type="button"
               >
                 <span
-                  className={`absolute top-1 size-5 rounded-full bg-white shadow transition ${
-                    values[item.key] ? "left-6" : "left-1"
-                  }`}
+                  className={`absolute top-1 size-5 rounded-full bg-white shadow transition ${values[item.key] ? "left-6" : "left-1"
+                    }`}
                 />
               </button>
             </div>

@@ -5,12 +5,15 @@ import Home from "@/components/Dashboard/Home";
 import LoginPage from "@/components/LoginPage";
 import RegistrationPage from "@/components/RegistrationPage";
 import VerifyOtp from "@/components/VerifyUser";
-import NexoraLanding from "@/components/Landing/NexoraLanding";
+import ONEOBankLanding from "@/components/Landing/NexoraLanding";
+
 
 const App = () => {
+
   return (
+   
     <Routes>
-      <Route element={<NexoraLanding />} path="/" />
+      <Route element={<ONEOBankLanding />} path="/" />
       <Route element={<RegistrationPage />} path="/register" />
       <Route element={<VerifyOtp />} path="/verify-otp" />
       <Route element={<LoginPage />} path="/login" />
@@ -18,6 +21,8 @@ const App = () => {
       <Route element={<Navigate replace to="/home" />} path="/Home" />
       <Route element={<Footer />} path="/footer" />
     </Routes>
+  
+   
   );
 };
 

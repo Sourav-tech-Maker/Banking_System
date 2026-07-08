@@ -107,9 +107,9 @@ async function getDashboardData(user) {
         }]
         : []
 
-    // 6. Calculate nexora coins
+    // 6. Calculate ONEO Bank coins
     const activeAccounts = accounts.filter(acc => acc.status === 'Active').length
-    const nexoraCoins = Math.floor(totalBalance / 1000) + activeAccounts * 50
+    const ONEO_BankCoins = Math.floor(totalBalance / 1000) + activeAccounts * 50
     const completedTransactionCount = await transactionModel.countDocuments({
         status: 'Completed',
         $or: [
@@ -183,7 +183,7 @@ async function getDashboardData(user) {
             totalBalance,
             totalIncome,
             totalExpense,
-            nexoraCoins,
+            ONEO_BankCoins,
             totalAccounts: accounts.length,
             accountStatus: accounts.length > 0 ? accounts[0].status : 'No Account'
         },

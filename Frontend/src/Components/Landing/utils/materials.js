@@ -1,5 +1,3 @@
-import * as THREE from 'three'
-
 // Brushed Titanium — premium metallic surface
 export function createTitaniumMaterial(color = '#c0c0c8') {
   return {

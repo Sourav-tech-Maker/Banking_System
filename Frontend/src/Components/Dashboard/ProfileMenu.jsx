@@ -47,7 +47,7 @@ export default function ProfileMenu({ user, onClose, onNavigate }) {
     } catch {
       // Even if logout API fails, clear local state
     } finally {
-      sessionStorage.removeItem("nexoraUser");
+      sessionStorage.removeItem("ONEO BankUser");
       navigate("/login", { replace: true });
     }
   };
@@ -88,7 +88,7 @@ export default function ProfileMenu({ user, onClose, onNavigate }) {
                 {displayName}
               </p>
               <p className="truncate text-xs text-slate-500">
-                {user?.email || "customer@nexora.com"}
+                {user?.email || "customer@ONEO Bank.com"}
               </p>
             </div>
           </div>

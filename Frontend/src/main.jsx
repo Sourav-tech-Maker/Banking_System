@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { TooltipProvider } from "@/components/ui/tooltip";
 import './index.css'
 import App from './App.jsx'
+import './i18n/index'
 
-// Silence THREE.Clock deprecation and Font parsing warnings from libraries
 const originalWarn = console.warn;
 console.warn = (...args) => {
   if (args[0] && typeof args[0] === 'string') {

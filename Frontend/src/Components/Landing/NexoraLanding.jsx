@@ -129,7 +129,7 @@ export default function ONEOBankLanding() {
       {/* Loading Overlay */}
       {!loadingComplete && (
         <div className="loading-overlay">
-          <div className="loading-logo font-bold uppercase tracking-widest">ONEO Bank</div>
+          <div className="loading-logo font-bold uppercase tracking-widest">YONO App</div>
           <div className="loading-progress-container">
             <div className="loading-progress-bar" style={{ width: `${loadProgress}%` }} />
           </div>
@@ -170,7 +170,7 @@ export default function ONEOBankLanding() {
           {/* Section 1: Loading */}
           <section className="scroll-section">
             <div className={`overlay-content ${activeScene === 'loading' ? 'active' : ''}`}>
-              <h1 className="overlay-title">Initializing ONEO Bank AI</h1>
+              <h1 className="overlay-title">Initializing YONO App AI</h1>
               <p className="overlay-subtitle">Activating biometric protocols and neural core links.</p>
             </div>
           </section>
@@ -258,7 +258,7 @@ export default function ONEOBankLanding() {
           {/* Section 12: Final Reveal */}
           <section className="scroll-section">
             <div className={`overlay-content ${activeScene === 'finalReveal' ? 'active' : ''}`}>
-              <h1 className="overlay-title">ONEO Bank</h1>
+              <h1 className="overlay-title">YONO App</h1>
               <p className="overlay-subtitle">One Platform. Infinite Intelligence.</p>
               <Link to="/register" className="overlay-cta-btn gap-2 font-bold">
                 Get Started <ArrowRight className="size-5" />

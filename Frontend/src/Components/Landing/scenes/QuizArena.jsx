@@ -61,7 +61,7 @@ export default function QuizArena({ progress = 0, visible = true }) {
             Weekly Tech Quiz
           </HolographicText>
           <HolographicText position={[0, 1.4, 0]} fontSize={0.12} color="#94a3b8" opacity={Math.min(1, (progress - 0.35) / 0.2)}>
-            Test your knowledge. Earn ONEO Bank Coins.
+            Test your knowledge. Earn YONO App Coins.
           </HolographicText>
 
           {/* Timer circle */}

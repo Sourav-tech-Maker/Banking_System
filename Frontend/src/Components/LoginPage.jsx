@@ -70,7 +70,7 @@ const LoginPage = () => {
       );
       setErrorMessage("");
       setSuccessMessage(response.data.message);
-      sessionStorage.setItem("ONEO BankUser", JSON.stringify(response.data.user || {}));
+      sessionStorage.setItem("YONO AppUser", JSON.stringify(response.data.user || {}));
 
       setTimeout(() => {
         navigate("/home", {
@@ -106,22 +106,22 @@ const LoginPage = () => {
       )}
 
       <main className="flex min-h-screen w-full bg-slate-950 font-sans text-slate-900 overflow-hidden">
-        
+
         <section className="hidden lg:flex w-1/2 flex-col justify-between p-12 relative overflow-hidden text-white bg-slate-950">
-     
+
           <div className="absolute inset-0 z-0">
-            <img src={buildingBg} alt="ONEO Banking HQ" className="w-full h-full object-cover opacity-60" />
+            <img src={buildingBg} alt="YONO Apping HQ" className="w-full h-full object-cover opacity-60" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/60" />
             <div className="absolute inset-0 bg-slate-950/30" />
           </div>
 
           <div className="relative z-10 flex items-center">
 
-            <div className="relative w-8 h-10 bg-gradient-to-tr from-pink-600 via-fuchsia-500 to-violet-600 rounded-lg flex items-center justify-center font-black text-2xl text-white shadow-lg shadow-indigo-500/20">
+            <div className="relative w-8 h-10 bg-gradient-to-tr from-pink-600 via-fuchsia-500 to-violet-600 rounded-lg flex items-center justify-center font-black text-2xl text-white shadow-lg shadow-indigo-500/20 transition-transform duration-300 hover:scale-125 cursor-default">
               1
             </div>
             <div className="ml-3">
-              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none">ONEO</span>
+              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none transition-transform duration-300 hover:scale-75 cursor-default">ONEO</span>
               <span className="block text-[12px] tracking-[0.25em] text-slate-400 font-bold uppercase">{t("brand.logo_sub")}</span>
             </div>
           </div>
@@ -188,7 +188,7 @@ const LoginPage = () => {
 
           {/* Top Language Select Indicator */}
           <div className="absolute top-6 right-8 z-20">
-            <button 
+            <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
               className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer bg-white"
             >
@@ -199,13 +199,13 @@ const LoginPage = () => {
 
             {isLangDropdownOpen && (
               <>
-                
-                <div 
-                  className="fixed inset-0 z-10" 
+
+                <div
+                  className="fixed inset-0 z-10"
                   onClick={() => setIsLangDropdownOpen(false)}
                 />
-                
-                
+
+
                 <div className="absolute right-0 mt-1.5 w-32 bg-white border border-slate-100 rounded-xl shadow-lg py-1 z-20 animate-fadeIn">
                   {[
                     { code: "en", label: "English" },
@@ -219,9 +219,8 @@ const LoginPage = () => {
                         i18n.changeLanguage(lang.code);
                         setIsLangDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${
-                        i18n.language.startsWith(lang.code) ? "text-indigo-600 font-bold bg-indigo-50/50" : "text-slate-600 font-medium"
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${i18n.language.startsWith(lang.code) ? "text-indigo-600 font-bold bg-indigo-50/50" : "text-slate-600 font-medium"
+                        }`}
                     >
                       {lang.label}
                     </button>
@@ -232,7 +231,7 @@ const LoginPage = () => {
           </div>
 
           <div className="w-full max-w-[400px] space-y-6">
-            
+
             {/* Form Welcome Header */}
             <div className="space-y-1 pt-4">
               <h2 className="text-3xl font-extrabold tracking-tight">
@@ -243,7 +242,7 @@ const LoginPage = () => {
                       key={i}
                       className={
                         isTarget
-                          ? "inline-block bg-gradient-to-r from-pink-300 via-violet-400 to-pink-600 bg-clip-text text-transparent transition-transform duration-300 hover:scale-[1.2] cursor-default origin-left"
+                          ? "inline-block bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-300 bg-clip-text text-transparent transition-transform duration-300 hover:scale-[1.2] cursor-default origin-left"
                           : "inline-block text-black"
                       }
                     >
@@ -256,7 +255,7 @@ const LoginPage = () => {
                 {t("login.subtitle")}
               </p>
             </div>
-            
+
             {successMessage && (
               <div className="flex items-start gap-3 p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs animate-fadeIn">
                 <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
@@ -280,7 +279,7 @@ const LoginPage = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              
+
               <div className="space-y-1.5">
                 {/* Instead of writing static words, we use the t() function: */}
                 <label className="text-xs font-bold text-slate-700">
@@ -357,7 +356,7 @@ const LoginPage = () => {
                   </label>
                   <div className="relative">
                     <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input  type="password"  name="roleAccessKey" value={formData.roleAccessKey}
+                    <input type="password" name="roleAccessKey" value={formData.roleAccessKey}
                       onChange={handleChange}
                       required
                       placeholder={t("login.rbac_placeholder")}

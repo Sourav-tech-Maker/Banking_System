@@ -287,7 +287,7 @@ export default function AdminPanel() {
       items: ["Fraud alerts", "Risk score", "Suspicious login", "Investigation"],
     },
     {
-      title: "ONEO Bank Coins",
+      title: "YONO App Coins",
       status: "Planned",
       icon: Coins,
       text: "Coin balances, redemption approvals, and reward history.",
@@ -468,7 +468,7 @@ export default function AdminPanel() {
     <div className="space-y-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">ONEO Bank Back Office</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">YONO App Back Office</p>
           <h2 className="mt-1 text-2xl font-bold text-slate-950">Admin Control Panel</h2>
           <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500">
             Manage users, verify KYC documents, monitor platform activity, and prepare the next admin modules.
@@ -560,8 +560,8 @@ export default function AdminPanel() {
         ].map((tab) => (
           <button
             className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition ${activeTab === tab.id
-                ? "border-indigo-600 text-indigo-600"
-                : "border-transparent text-slate-500 hover:text-slate-900"
+              ? "border-indigo-600 text-indigo-600"
+              : "border-transparent text-slate-500 hover:text-slate-900"
               }`}
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -935,9 +935,9 @@ export default function AdminPanel() {
                         </td>
                         <td className="p-3">
                           <span className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${txn.status === "Completed" ? "bg-emerald-50 text-emerald-700 ring-emerald-200" :
-                              txn.status === "Pending" ? "bg-amber-50 text-amber-700 ring-amber-200" :
-                                txn.status === "Reversed" ? "bg-violet-50 text-violet-700 ring-violet-200" :
-                                  "bg-rose-50 text-rose-700 ring-rose-200"
+                            txn.status === "Pending" ? "bg-amber-50 text-amber-700 ring-amber-200" :
+                              txn.status === "Reversed" ? "bg-violet-50 text-violet-700 ring-violet-200" :
+                                "bg-rose-50 text-rose-700 ring-rose-200"
                             }`}>
                             {txn.status}
                           </span>

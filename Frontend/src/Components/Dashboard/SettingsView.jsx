@@ -52,7 +52,7 @@ export default function SettingsView() {
       <div>
         <h2 className="text-xl font-bold text-slate-950">Settings</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Manage preferences for your ONEO Bank banking experience.
+          Manage preferences for your YONO App banking experience.
         </p>
       </div>
 

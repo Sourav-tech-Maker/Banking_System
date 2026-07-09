@@ -76,7 +76,7 @@ export default function DebitCard({ progress = 1, position = [0, 0, 0], rotation
         ))}
       </group>
 
-      {/* ONEO Bank Text */}
+      {/* YONO App Text */}
       <group position={[
         lerp(textOffset[0], -0.5, easedP),
         lerp(textOffset[1], -0.65, easedP),
@@ -89,7 +89,7 @@ export default function DebitCard({ progress = 1, position = [0, 0, 0], rotation
           anchorY="middle"
           letterSpacing={0.15}
         >
-          ONEO Bank
+          YONO App
         </Text>
       </group>
 

@@ -57,7 +57,7 @@ function getCounterparty(transaction) {
     return transaction.otherAccount;
   }
 
-  return "ONEO Bank account";
+  return "YONO App account";
 }
 
 export default function RecentTransactions({ transactions = [], onViewAll }) {

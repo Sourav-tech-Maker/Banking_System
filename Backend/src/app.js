@@ -1,4 +1,4 @@
-const i18nextHttpMiddleware = require('./middleware/translation.middleware');
+// const i18nextHttpMiddleware = require('./middleware/translation.middleware');
 const express = require('express');
 const morgan = require('morgan')
 const authRouter = require("./routes/auth.routes")

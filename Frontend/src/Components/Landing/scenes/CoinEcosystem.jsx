@@ -82,10 +82,10 @@ export default function CoinEcosystem({ progress = 0, visible = true }) {
       })}
 
       <HolographicText position={[0, 3.5, 0]} fontSize={0.25} color="#f59e0b" opacity={progress}>
-        ONEO Bank Coin Ecosystem
+        YONO App Coin Ecosystem
       </HolographicText>
       <HolographicText position={[0, 2.8, 0]} fontSize={0.12} color="#94a3b8" opacity={progress * 0.8}>
-        Rewards flow into the ONEO Bank ecosystem
+        Rewards flow into the YONO App ecosystem
       </HolographicText>
 
       <ParticleField count={100} color="#f59e0b" size={0.02} area={15} speed={0.3} opacity={0.4} />

@@ -78,7 +78,7 @@ export default function StatsCards({ summary }) {
     },
     {
       key: "coins",
-      title: "ONEO Bank Coins",
+      title: "YONO App Coins",
       value: numberFormatter.format(summary.ONEO_BankCoins || 0),
       detail: `${numberFormatter.format(summary.coinsChange || 0)} earned this week`,
       change: summary.coinsChange ? 100 : 0,

@@ -26,8 +26,8 @@ const benefits = [
   },
   {
     icon: Sparkles,
-    title: "ONEO Bank Rewards",
-    description: "Earn ONEO Bank Coins on every transaction and redeem exclusive perks.",
+    title: "YONO App Rewards",
+    description: "Earn YONO App Coins on every transaction and redeem exclusive perks.",
   },
   {
     icon: CreditCard,
@@ -134,7 +134,7 @@ export default function OpenAccount() {
 
           <h2 className="mt-5 text-2xl font-bold text-slate-950">Open a Savings Account</h2>
           <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
-            Start your banking journey with ONEO Bank. One click is all it takes — no paperwork, no
+            Start your banking journey with YONO App. One click is all it takes — no paperwork, no
             waiting. Your KYC must be approved before opening an account.
           </p>
 

@@ -89,7 +89,7 @@ export default function FinalReveal({ progress = 0, visible = true }) {
 
       {/* Final text */}
       <HolographicText position={[0, 4, 0]} fontSize={0.8} color="#ffffff" opacity={textProgress}>
-        ONEO Bank
+        YONO App
       </HolographicText>
       <HolographicText position={[0, 3, 0]} fontSize={0.2} color="#94a3b8" opacity={textProgress * 0.9}>
         One Platform. Infinite Intelligence.

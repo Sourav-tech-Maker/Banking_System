@@ -44,7 +44,7 @@ const emptyDashboard = {
   },
   aiInsights: {
     headline: "Your activity is ready to grow",
-    message: "Live insights appear as your ONEO Bank account activity grows.",
+    message: "Live insights appear as your YONO App account activity grows.",
     savingsPotential: 0,
     items: [],
   },
@@ -52,7 +52,7 @@ const emptyDashboard = {
 
 function readStoredUser() {
   try {
-    return JSON.parse(sessionStorage.getItem("ONEO BankUser")) || {};
+    return JSON.parse(sessionStorage.getItem("YONO AppUser")) || {};
   } catch {
     return {};
   }

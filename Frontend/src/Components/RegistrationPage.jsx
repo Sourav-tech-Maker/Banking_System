@@ -39,7 +39,7 @@ const RegistrationPage = () => {
     role: "user",
     roleAccessKey: ""
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -172,12 +172,12 @@ const RegistrationPage = () => {
       )}
 
       <main className="flex min-h-screen w-full bg-slate-950 font-sans text-slate-900 overflow-hidden">
-        {/* Left Side: Skyscraper Brand Panel */}
+
         <section className="hidden lg:flex w-1/2 flex-col justify-between p-12 relative overflow-hidden text-white bg-slate-950">
-          {/* Background Image Layer */}
+
           <div className="absolute inset-0 z-0">
             {/* ONEO:- One Network for Everything Online */}
-            <img src={buildingBg} alt="ONEO Banking HQ" className="w-full h-full object-cover opacity-60" />
+            <img src={buildingBg} alt="YONO Apping HQ" className="w-full h-full object-cover opacity-60" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/60" />
             <div className="absolute inset-0 bg-slate-950/30" />
           </div>
@@ -188,7 +188,7 @@ const RegistrationPage = () => {
               1
             </div>
             <div className="ml-3">
-              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none">ONEO</span>
+              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none">YONO</span>
               <span className="block text-[12px] tracking-[0.25em] text-slate-400 font-bold uppercase">{t("brand.logo_sub")}</span>
             </div>
           </div>
@@ -196,11 +196,10 @@ const RegistrationPage = () => {
           {/* Center Info Panel */}
           <div className="relative z-10 space-y-8 max-w-lg my-auto">
             <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              <span className="inline-block bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+              <span className="inline-block bg-gradient-to-r from-white via-slate-500 to-slate-300 bg-clip-text text-transparent">
                 {t("brand.headline_white")}
               </span>
-              <br />
-              <span className="inline-block bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent transition-transform duration-300 hover:scale-[1.3] cursor-default origin-left">
+              <span className="inline-block bg-gradient-to-r from-white via-slate-500 to-slate-300 bg-clip-text text-transparent transition-transform duration-300 hover:scale-[1.3] cursor-default origin-left">
                 {t("brand.headline_highlight")}
               </span>
             </h1>
@@ -256,7 +255,7 @@ const RegistrationPage = () => {
 
         {/* Right Side: Registration Form */}
         <section className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 sm:p-12 relative overflow-y-auto">
-          
+
           {/* Top Already Have an Account Link & Language Selector */}
           <div className="absolute top-6 right-8 flex items-center gap-4 text-xs text-slate-500 z-20">
             <div className="font-semibold">
@@ -268,11 +267,10 @@ const RegistrationPage = () => {
 
             {/* Language dropdown */}
             <div className="relative">
-              <button 
+              <button
                 type="button"
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer bg-white"
-              >
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-slate-600 text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer bg-white">
                 <Globe className="w-3.5 h-3.5" />
                 <span>{languageNames[i18n.language.split('-')[0]] || "English"}</span>
                 <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
@@ -280,18 +278,18 @@ const RegistrationPage = () => {
 
               {isLangDropdownOpen && (
                 <>
-                  <div 
-                    className="fixed inset-0 z-10" 
+                  <div
+                    className="fixed inset-0 z-10"
                     onClick={() => setIsLangDropdownOpen(false)}
                   />
-                  
+
                   <div className="absolute right-0 mt-1.5 w-32 bg-white border border-slate-100 rounded-xl shadow-lg py-1 z-20 animate-fadeIn text-left">
                     {[
                       { code: "en", label: "English" },
-                      { code: "es", label: "Español" },
-                      { code: "fr", label: "Français" },
-                      { code: "de", label: "Deutsch" },
-                      { code: "hi", label: "हिन्दी" }
+                      { code: "hi", label: "हिन्दी" },
+                      { code: "es", label: "Spain" },
+                      { code: "fr", label: "France" },
+                      { code: "de", label: "Germany" },
                     ].map((lang) => (
                       <button
                         key={lang.code}
@@ -300,9 +298,8 @@ const RegistrationPage = () => {
                           i18n.changeLanguage(lang.code);
                           setIsLangDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${
-                          i18n.language.startsWith(lang.code) ? "text-indigo-600 font-bold bg-indigo-50/50" : "text-slate-600 font-medium"
-                        }`}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${i18n.language.startsWith(lang.code) ? "text-indigo-600 font-bold bg-indigo-50/50" : "text-slate-600 font-medium"
+                          }`}
                       >
                         {lang.label}
                       </button>
@@ -317,10 +314,25 @@ const RegistrationPage = () => {
             {/* Header Content */}
             <div className="space-y-1 pt-4">
               <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
-                {t("register.title")}
+                {t("register.title").split(/YONO/).map((part, index, arr) => (
+                  <span key={index}>
+                    {part}
+                    {index < arr.length - 1 && (
+                      <span className="inline-block font-bold text-indigo-600 transition-transform duration-300 hover:scale-[1.2] cursor-default">YONO</span>
+                    )}
+                  </span>
+                ))
+                }
               </h2>
               <p className="text-slate-500 text-sm">
-                {t("register.subtitle")}
+                {t("register.subtitle").split(/YONO/).map((part, index, arr) => (
+                  <span key={index}>
+                    {part}
+                    {index < arr.length - 1 && (
+                      <span className="font-bold text-indigo-600">YONO</span>
+                    )}
+                  </span>
+                ))}
               </p>
             </div>
 
@@ -484,7 +496,7 @@ const RegistrationPage = () => {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                
+
                 {/* Password Strength Indicator */}
                 {formData.password.length > 0 && (
                   <div className="flex items-center gap-2 mt-1.5">

@@ -107,7 +107,7 @@ async function getDashboardData(user) {
         }]
         : []
 
-    // 6. Calculate ONEO Bank coins
+    // 6. Calculate YONO App coins
     const activeAccounts = accounts.filter(acc => acc.status === 'Active').length
     const ONEO_BankCoins = Math.floor(totalBalance / 1000) + activeAccounts * 50
     const completedTransactionCount = await transactionModel.countDocuments({

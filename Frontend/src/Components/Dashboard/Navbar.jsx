@@ -48,7 +48,7 @@ const Navbar = ({ user, notificationCount = 0, onRefresh, refreshing, onNavigate
               Welcome Back, {displayName}
             </h1>
             <p className="mt-1 hidden text-sm text-slate-500 sm:block">
-              Your secure ONEO Bank banking overview is live.
+              Your secure YONO App banking overview is live.
             </p>
           </div>
         </div>

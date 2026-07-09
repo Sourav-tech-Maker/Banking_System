@@ -29,7 +29,7 @@ const beneficiarySchema = new mongoose.Schema({
 
     bankName: {
         type: String,
-        default: "ONEO Bank"
+        default: "YONO App"
     },
     accountType: {
         type: String,

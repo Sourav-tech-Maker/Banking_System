@@ -26,7 +26,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 function readStoredUser() {
   try {
-    return JSON.parse(sessionStorage.getItem("ONEO BankUser")) || {};
+    return JSON.parse(sessionStorage.getItem("YONO AppUser")) || {};
   } catch {
     return {};
   }
@@ -60,13 +60,13 @@ export default function AppSidebar({ activeView = "dashboard", onNavigate }) {
       await axios.post(`${API_BASE_URL}/api/auth/logout`, {}, {
         withCredentials: true,
       });
-      sessionStorage.removeItem("ONEO BankUser");
+      sessionStorage.removeItem("YONO AppUser");
       navigate("/login", { replace: true });
     } catch (error) {
       const status = error.response?.status;
 
       if (status === 400 || status === 401) {
-        sessionStorage.removeItem("ONEO BankUser");
+        sessionStorage.removeItem("YONO AppUser");
         navigate("/login", { replace: true });
         return;
       }
@@ -82,10 +82,10 @@ export default function AppSidebar({ activeView = "dashboard", onNavigate }) {
       <SidebarHeader className="border-b border-white/10 p-6">
         <div className="flex items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/15">
-            <img alt="ONEO Bank" className="size-8 object-contain" src={logo} />
+            <img alt="YONO App" className="size-8 object-contain" src={logo} />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-bold tracking-normal text-white">ONEO Bank</h1>
+            <h1 className="truncate text-2xl font-bold tracking-normal text-white">YONO App</h1>
             <p className="text-sm font-medium text-slate-400">Secure Banking</p>
           </div>
         </div>

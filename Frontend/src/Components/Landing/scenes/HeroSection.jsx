@@ -28,14 +28,14 @@ export default function HeroSection({ progress = 0, visible = true }) {
       <ParticleField count={150} color="#00f0ff" size={0.02} area={15} speed={0.2} opacity={0.5} />
       <ParticleField count={50} color="#8b5cf6" size={0.025} area={12} speed={0.15} opacity={0.4} />
 
-      {/* ONEO Bank title */}
+      {/* YONO App title */}
       <HolographicText
         position={[0, 2.5, 0]}
         fontSize={1.2}
         color="#ffffff"
         opacity={textOpacity * textFade}
       >
-        ONEO Bank
+        YONO App
       </HolographicText>
 
       {/* Tagline */}

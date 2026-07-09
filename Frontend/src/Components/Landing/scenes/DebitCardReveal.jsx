@@ -38,7 +38,7 @@ export default function DebitCardReveal({ progress = 0, visible = true }) {
           color="#94a3b8"
           opacity={Math.min(1, (progress - 0.6) / 0.3)}
         >
-          ONEO Bank Titanium Debit Card
+          YONO App Titanium Debit Card
         </HolographicText>
       )}
 

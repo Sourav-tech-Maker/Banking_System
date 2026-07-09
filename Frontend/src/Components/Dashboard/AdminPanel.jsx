@@ -79,6 +79,7 @@ export default function AdminPanel() {
   const [rejectReason, setRejectReason] = useState("");
   const [submittingKyc, setSubmittingKyc] = useState(false);
   const [deletingKycId, setDeletingKycId] = useState(null);
+  const [activeLightboxImg, setActiveLightboxImg] = useState(null);
 
   const fetchAdminData = useCallback(async () => {
     setLoading(true);
@@ -241,6 +242,27 @@ export default function AdminPanel() {
       String(app.documentType || "").toLowerCase().includes(query) ||
       String(app.documentNumber || "").toLowerCase().includes(query) ||
       String(app.UserId?.email || "").toLowerCase().includes(query)
+    );
+  });
+
+  const filteredTransactions = transactions.filter((txn) => {
+    const query = searchQuery.toLowerCase();
+    const fromUser = txn.FromAccount?.user?.username || "";
+    const toUser = txn.toAccount?.user?.username || "";
+    const fromEmail = txn.FromAccount?.user?.email || "";
+    const toEmail = txn.toAccount?.user?.email || "";
+    const id = String(txn._id || txn.id || "");
+    const amount = String(txn.amount || "");
+    const status = String(txn.status || "");
+
+    return (
+      fromUser.toLowerCase().includes(query) ||
+      toUser.toLowerCase().includes(query) ||
+      fromEmail.toLowerCase().includes(query) ||
+      toEmail.toLowerCase().includes(query) ||
+      id.toLowerCase().includes(query) ||
+      amount.includes(query) ||
+      status.toLowerCase().includes(query)
     );
   });
 
@@ -699,11 +721,10 @@ export default function AdminPanel() {
 
                   <div className="flex flex-col gap-3 sm:flex-row xl:w-64 xl:flex-col">
                     {app.documentImg && (
-                      <a
-                        className="group relative block h-36 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 xl:h-44"
-                        href={app.documentImg}
-                        rel="noopener noreferrer"
-                        target="_blank"
+                      <button
+                        onClick={() => setActiveLightboxImg(app.documentImg)}
+                        className="group relative block h-36 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 xl:h-44 cursor-pointer text-left w-full"
+                        type="button"
                       >
                         <img
                           alt="KYC document"
@@ -713,20 +734,19 @@ export default function AdminPanel() {
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
                           <Eye className="size-5 text-white" />
                         </div>
-                      </a>
+                      </button>
                     )}
 
                     <div className="flex flex-wrap gap-2">
                       {app.documentImg && (
-                        <a
-                          className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
-                          href={app.documentImg}
-                          rel="noopener noreferrer"
-                          target="_blank"
+                        <button
+                          onClick={() => setActiveLightboxImg(app.documentImg)}
+                          className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+                          type="button"
                         >
                           <Eye className="size-3.5" />
                           View Document
-                        </a>
+                        </button>
                       )}
 
                       {app.status === "Pending" ? (
@@ -915,14 +935,14 @@ export default function AdminPanel() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {transactions.length === 0 ? (
+                {filteredTransactions.length === 0 ? (
                   <tr>
                     <td className="p-4 text-center text-slate-500" colSpan="6">
-                      No transactions recorded in the system.
+                      {transactions.length === 0 ? "No transactions recorded in the system." : "No transactions match your search."}
                     </td>
                   </tr>
                 ) : (
-                  transactions.map((txn) => {
+                  filteredTransactions.map((txn) => {
                     const fromUser = txn.FromAccount?.user?.username || "Unknown Sender";
                     const toUser = txn.toAccount?.user?.username || "Unknown Receiver";
                     return (
@@ -1067,6 +1087,28 @@ export default function AdminPanel() {
                 {submittingKyc ? "Rejecting..." : "Reject KYC"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Document Lightbox Modal */}
+      {activeLightboxImg && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 cursor-zoom-out"
+          onClick={() => setActiveLightboxImg(null)}
+        >
+          <div className="relative max-w-4xl max-h-[85vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setActiveLightboxImg(null)}
+              className="absolute right-4 top-4 z-50 p-2 text-white bg-black/50 hover:bg-black/80 rounded-full transition cursor-pointer"
+            >
+              <XCircle className="size-6" />
+            </button>
+            <img
+              alt="KYC document preview"
+              className="max-w-full max-h-[80vh] rounded-lg object-contain shadow-2xl"
+              src={activeLightboxImg}
+            />
           </div>
         </div>
       )}

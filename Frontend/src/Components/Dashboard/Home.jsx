@@ -15,6 +15,7 @@ import KYCVerification from "./KYCVerification";
 import AdminPanel from "./AdminPanel";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
+import GoalsView from "./GoalsView";
 
 import {
   SidebarInset,
@@ -306,6 +307,8 @@ const Home = () => {
         return <ProfileView />;
       case "settings":
         return <SettingsView />;
+      case "goals":
+        return <GoalsView />;
       default:
         return (
           <>

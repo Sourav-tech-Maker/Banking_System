@@ -71,14 +71,13 @@ GoalSchema.virtual('progressPercentage').get(function() {
     return Math.min(Math.round(percentage), 100); 
 })
 
-GoalSchema.pre('save', function(next) {
+GoalSchema.pre('save', function() {
     if (this.currentAmount >= this.targetAmount) {
         this.status = 'completed';
     } else {
         this.status = 'active';
     }
-    next();
-});                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+});
 
-const GoalModel = mongoose.Model('Goal', GoalSchema)
-module.exports = GoalModel
+const GoalModel = mongoose.model('Goal', GoalSchema);
+module.exports = GoalModel;

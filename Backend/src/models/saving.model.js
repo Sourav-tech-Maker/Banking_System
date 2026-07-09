@@ -5,7 +5,7 @@ const SavingsLogSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Goal', 
         required: [true, 'Goal ID connection is required'],
-        index: true /
+        index: true
     },
     amountAdded: {
         type: Number,
@@ -25,3 +25,6 @@ const SavingsLogSchema = new mongoose.Schema({
 }, { 
     timestamps: true 
 });
+
+const SavingsModel = mongoose.model('SavingsLog', SavingsLogSchema);
+module.exports = SavingsModel;

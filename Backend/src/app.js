@@ -9,6 +9,7 @@ const KycRoutes = require('./routes/Kyc.routes')
 const dashboardRoutes = require('./routes/dashboard.routes')
 const userRoutes = require('./routes/user.routes')
 const adminRoutes = require('./routes/admin.routes')
+const goalsRoutes = require('./routes/goals.routes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -30,6 +31,7 @@ app.use('/api/Kyc', KycRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/goals', goalsRoutes)
 
 app.get('/', (req, res)=>{
     res.send("Welcome to Banking System API");

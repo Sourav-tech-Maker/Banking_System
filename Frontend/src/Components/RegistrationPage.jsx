@@ -160,7 +160,15 @@ const RegistrationPage = () => {
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm transition-all duration-300">
           <div className="bg-white border border-slate-100 p-8 rounded-2xl shadow-xl flex flex-col items-center max-w-xs w-full text-center">
-            <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+            <ThreeCircles
+              visible={true}
+              height="100"
+              width="100"
+              color="#4fa94d"
+              ariaLabel="three-circles-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
             <p className="mt-5 text-lg font-bold text-slate-800 tracking-wide">
               {t("register.loading_creating")}
             </p>
@@ -176,7 +184,7 @@ const RegistrationPage = () => {
         <section className="hidden lg:flex w-1/2 flex-col justify-between p-12 relative overflow-hidden text-white bg-slate-950">
 
           <div className="absolute inset-0 z-0">
-            {/* ONEO:- One Network for Everything Online */}
+            
             <img src={buildingBg} alt="YONO Apping HQ" className="w-full h-full object-cover opacity-60" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/60" />
             <div className="absolute inset-0 bg-slate-950/30" />

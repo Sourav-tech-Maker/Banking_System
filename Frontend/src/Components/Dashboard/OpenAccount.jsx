@@ -27,7 +27,7 @@ const benefits = [
   {
     icon: Sparkles,
     title: "YONO App Rewards",
-    description: "Earn YONO App Coins on every transaction and redeem exclusive perks.",
+    description: "Earn YONO Coins on every transaction and redeem exclusive perks.",
   },
   {
     icon: CreditCard,

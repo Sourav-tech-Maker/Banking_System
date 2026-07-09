@@ -4,6 +4,8 @@ import {
   ChevronDown,
   RefreshCw,
   Search,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -24,7 +26,15 @@ function getInitials(name) {
     .toUpperCase() || "NX";
 }
 
-const Navbar = ({ user, notificationCount = 0, onRefresh, refreshing, onNavigate }) => {
+const Navbar = ({
+  user,
+  notificationCount = 0,
+  onRefresh,
+  refreshing,
+  onNavigate,
+  isDarkMode = false,
+  onToggleDarkMode,
+}) => {
   const displayName = getDisplayName(user);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,8 +71,7 @@ const Navbar = ({ user, notificationCount = 0, onRefresh, refreshing, onNavigate
             disabled={refreshing}
             onClick={onRefresh}
             title="Refresh dashboard"
-            type="button"
-          >
+            type="button">
             <RefreshCw className={`size-5 ${refreshing ? "animate-spin" : ""}`} />
           </button>
 
@@ -93,13 +102,19 @@ const Navbar = ({ user, notificationCount = 0, onRefresh, refreshing, onNavigate
             )}
           </button>
 
+          {/* Dark Mode Toggle */}
+          <button
+            aria-label="Toggle dark mode"
+            className="inline-flex size-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
+            onClick={onToggleDarkMode} title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} type="button">
+            {isDarkMode ? <Sun className="size-5 text-amber-500" /> : <Moon className="size-5 text-slate-600" />}
+          </button>
           {/* Profile Dropdown */}
           <div className="relative" ref={profileRef}>
             <button
               className="flex items-center gap-2 rounded-md border border-slate-200 bg-white py-1.5 pl-1.5 pr-2 shadow-sm transition hover:bg-slate-50"
               type="button"
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-            >
+              onClick={() => setShowProfileMenu(!showProfileMenu)}>
               <span className="flex size-9 items-center justify-center rounded-md bg-gradient-to-br from-indigo-500 to-cyan-500 text-sm font-bold text-white">
                 {getInitials(displayName)}
               </span>

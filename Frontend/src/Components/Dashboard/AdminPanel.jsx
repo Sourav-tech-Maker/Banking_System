@@ -26,6 +26,7 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
+import { ThreeCircles } from "react-loader-spinner";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -287,7 +288,7 @@ export default function AdminPanel() {
       items: ["Fraud alerts", "Risk score", "Suspicious login", "Investigation"],
     },
     {
-      title: "YONO App Coins",
+      title: "YONO Coins",
       status: "Planned",
       icon: Coins,
       text: "Coin balances, redemption approvals, and reward history.",
@@ -459,7 +460,15 @@ export default function AdminPanel() {
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-indigo-600" />
+        <ThreeCircles
+          visible={true}
+          height="100"
+          width="100"
+          color="#4fa94d"
+          ariaLabel="three-circles-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
       </div>
     );
   }

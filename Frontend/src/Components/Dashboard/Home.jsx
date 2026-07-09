@@ -118,6 +118,47 @@ const Home = () => {
   const [error, setError] = useState("");
   const [activeView, setActiveView] = useState("dashboard");
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedSettings = localStorage.getItem("yono_settings");
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        if (parsed.darkMode) {
+          return localStorage.getItem("yono_theme") === "dark";
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
+  const handleToggleDarkMode = () => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      const savedSettings = localStorage.getItem("yono_settings");
+      if (savedSettings) {
+        try {
+          const parsed = JSON.parse(savedSettings);
+          if (parsed.darkMode) {
+            localStorage.setItem("yono_theme", next ? "dark" : "light");
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+      return next;
+    });
+  };
+
   // Send Money modal state
   const [showSendModal, setShowSendModal] = useState(false);
   const [userAccounts, setUserAccounts] = useState([]);
@@ -335,6 +376,8 @@ const Home = () => {
           onRefresh={fetchDashboard}
           refreshing={refreshing}
           onNavigate={setActiveView}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={handleToggleDarkMode}
         />
 
         <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">

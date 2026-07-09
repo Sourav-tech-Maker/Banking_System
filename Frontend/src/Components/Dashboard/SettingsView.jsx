@@ -26,7 +26,7 @@ const settings = [
   {
     key: "darkMode",
     title: "Dark Mode Preference",
-    description: "Save dark mode preference for future theme rollout.",
+    description: "Save and persist your dark mode preference on this device.",
     icon: Moon,
     defaultValue: false,
   },
@@ -34,6 +34,18 @@ const settings = [
 
 export default function SettingsView() {
   const [values, setValues] = useState(() => {
+    const saved = localStorage.getItem("yono_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return settings.reduce((acc, item) => {
+          acc[item.key] = parsed[item.key] !== undefined ? parsed[item.key] : item.defaultValue;
+          return acc;
+        }, {});
+      } catch (e) {
+        // ignore
+      }
+    }
     return settings.reduce((acc, item) => {
       acc[item.key] = item.defaultValue;
       return acc;
@@ -41,10 +53,26 @@ export default function SettingsView() {
   });
 
   const toggle = (key) => {
-    setValues((current) => ({
-      ...current,
-      [key]: !current[key],
-    }));
+    setValues((current) => {
+      const updated = {
+        ...current,
+        [key]: !current[key],
+      };
+      localStorage.setItem("yono_settings", JSON.stringify(updated));
+
+      // Handle dark mode side effects
+      if (key === "darkMode") {
+        if (updated.darkMode) {
+          // If enabled, save the current theme class on the document
+          const isDark = document.documentElement.classList.contains("dark");
+          localStorage.setItem("yono_theme", isDark ? "dark" : "light");
+        } else {
+          // If disabled, remove the saved theme preference
+          localStorage.removeItem("yono_theme");
+        }
+      }
+      return updated;
+    });
   };
 
   return (

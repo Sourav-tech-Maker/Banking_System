@@ -5,7 +5,6 @@ import Home from "@/components/Dashboard/Home";
 import LoginPage from "@/components/LoginPage";
 import RegistrationPage from "@/components/RegistrationPage";
 import VerifyOtp from "@/components/VerifyUser";
-import ONEOBankLanding from "@/components/Landing/NexoraLanding";
 
 
 const App = () => {
@@ -13,7 +12,7 @@ const App = () => {
   return (
    
     <Routes>
-      <Route element={<ONEOBankLanding />} path="/" />
+      <Route element={<RegistrationPage />} path="/" />
       <Route element={<RegistrationPage />} path="/register" />
       <Route element={<VerifyOtp />} path="/verify-otp" />
       <Route element={<LoginPage />} path="/login" />

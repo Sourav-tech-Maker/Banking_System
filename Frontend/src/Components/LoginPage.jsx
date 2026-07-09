@@ -14,11 +14,11 @@ import {
   Globe,
   ChevronDown,
   Apple,
-  Loader2,
   CheckCircle2,
   AlertCircle
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { ThreeCircles } from "react-loader-spinner";
 
 const LoginPage = () => {
   // we fetch t (used to translate words) and the i18n object (used to change languages)
@@ -94,7 +94,15 @@ const LoginPage = () => {
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm transition-all duration-300">
           <div className="bg-white border border-slate-100 p-8 rounded-2xl shadow-xl flex flex-col items-center max-w-xs w-full text-center">
-            <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+            <ThreeCircles
+              visible={true}
+              height="100"
+              width="100"
+              color="oklch(60.9% 0.126 221.723)"
+              ariaLabel="three-circles-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
             <p className="mt-5 text-lg font-bold text-slate-800 tracking-wide">
               Connecting...
             </p>
@@ -121,7 +129,7 @@ const LoginPage = () => {
               1
             </div>
             <div className="ml-3">
-              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none transition-transform duration-300 hover:scale-75 cursor-default">ONEO</span>
+              <span className="block text-3xl font-extrabold tracking-widest text-white leading-none transition-transform duration-300 hover:scale-75 cursor-default">YONO</span>
               <span className="block text-[12px] tracking-[0.25em] text-slate-400 font-bold uppercase">{t("brand.logo_sub")}</span>
             </div>
           </div>
@@ -209,10 +217,10 @@ const LoginPage = () => {
                 <div className="absolute right-0 mt-1.5 w-32 bg-white border border-slate-100 rounded-xl shadow-lg py-1 z-20 animate-fadeIn">
                   {[
                     { code: "en", label: "English" },
-                    { code: "es", label: "Español" },
-                    { code: "fr", label: "Français" },
-                    { code: "de", label: "Deutsch" },
-                    { code: "hi", label: "हिन्दी" }
+                    { code: "hi", label: "हिन्दी" },
+                    { code: "es", label: "Spain" },
+                    { code: "fr", label: "France" },
+                    { code: "de", label: "Germany" },
                   ].map((lang) => (
                     <button key={lang.code}
                       onClick={() => {

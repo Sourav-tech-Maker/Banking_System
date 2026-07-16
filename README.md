@@ -662,56 +662,326 @@ ledgerSchema.pre('findOneAndReplace', preventLedgerModification);
 
 ## 🔒 Security Model
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      SECURITY ARCHITECTURE                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐    │
-│  │   Password   │     │  JWT Tokens  │     │   OTP Layer  │    │
-│  │   Security   │     │   (Dual)     │     │  (SHA-256)   │    │
-│  ├──────────────┤     ├──────────────┤     ├──────────────┤    │
-│  │ bcryptjs     │     │ Access Token │     │ Email OTP    │    │
-│  │ Salt Rounds  │     │  (15 min)    │     │ for email    │    │
-│  │ Server-side  │     │ Refresh Token│     │ verification │    │
-│  │ validation   │     │  (HttpOnly)  │     │ + beneficiary│    │
-│  │ Regex rules  │     │  (7 days)    │     │ addition     │    │
-│  └──────────────┘     └──────────────┘     └──────────────┘    │
-│                                                                  │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐    │
-│  │  Brute-Force │     │  Token       │     │   Device     │    │
-│  │  Protection  │     │  Blacklist   │     │  Detection   │    │
-│  ├──────────────┤     ├──────────────┤     ├──────────────┤    │
-│  │ 5 failed     │     │ Logout       │     │ User-Agent   │    │
-│  │ attempts →   │     │ invalidates  │     │ tracking     │    │
-│  │ Auto-lock    │     │ token in DB  │     │ New device → │    │
-│  │ with timer   │     │              │     │ email alert  │    │
-│  └──────────────┘     └──────────────┘     └──────────────┘    │
-│                                                                  │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐    │
-│  │   CORS       │     │  Idempotency │     │  RBAC        │    │
-│  │   Policy     │     │  Keys        │     │  Guards      │    │
-│  ├──────────────┤     ├──────────────┤     ├──────────────┤    │
-│  │ Origin:      │     │ Unique key   │     │ customer     │    │
-│  │ localhost     │     │ per transfer │     │ admin        │    │
-│  │ :5173 only   │     │ Prevents     │     │ system       │    │
-│  │ Credentials  │     │ double-spend │     │ Middleware    │    │
-│  └──────────────┘     └──────────────┘     └──────────────┘    │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+> YONO Bank implements a **defense-in-depth** security architecture with **9 independent control layers**. Compromising any single layer does not grant access to the system — every boundary enforces its own validation independently.
 
-### Key Security Principles
+### Defense-in-Depth Layers
 
-| Principle | Implementation |
-|:---|:---|
-| **Defense in Depth** | Multiple independent security layers (password → JWT → OTP → RBAC) |
-| **Least Privilege** | Role-based middleware restricts admin routes to authorized users only |
-| **Immutable Audit Trail** | Ledger entries cannot be updated or deleted after creation |
-| **Secure Token Transport** | Refresh tokens delivered exclusively via `HttpOnly` cookies (XSS-resistant) |
-| **Idempotent Operations** | Unique transaction keys prevent financial duplication on network retry |
+```mermaid
+graph LR
+    subgraph L1 ["<b>Layer 1</b><br/>Network"]
+        CORS["CORS Origin<br/>Whitelist"]
+    end
+
+    subgraph L2 ["<b>Layer 2</b><br/>Transport"]
+        HTTPS["HTTPS/TLS<br/>Encryption"]
+    end
+
+    subgraph L3 ["<b>Layer 3</b><br/>Identity"]
+        PWD["bcryptjs<br/>Password Hash"]
+        OAUTH["Google<br/>OAuth 2.0"]
+    end
+
+    subgraph L4 ["<b>Layer 4</b><br/>Session"]
+        ACCESS["Access Token<br/><i>15 min · In-Memory</i>"]
+        REFRESH["Refresh Token<br/><i>7 days · HttpOnly Cookie</i>"]
+    end
+
+    subgraph L5 ["<b>Layer 5</b><br/>Verification"]
+        OTP["SHA-256<br/>Hashed OTPs"]
+    end
+
+    subgraph L6 ["<b>Layer 6</b><br/>Authorization"]
+        RBAC["Role-Based<br/>Access Control"]
+    end
+
+    subgraph L7 ["<b>Layer 7</b><br/>Anomaly Detection"]
+        BRUTE["Brute-Force<br/>Lockout Engine"]
+        DEVICE["Device Signature<br/>Monitoring"]
+    end
+
+    subgraph L8 ["<b>Layer 8</b><br/>Financial Integrity"]
+        IDEMP["Idempotency<br/>Key Validation"]
+        LEDGER["Immutable<br/>Ledger Audit"]
+    end
+
+    subgraph L9 ["<b>Layer 9</b><br/>Invalidation"]
+        BLACKLIST["Token<br/>Blacklist DB"]
+    end
+
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7 --> L8 --> L9
+
+    style L1 fill:#0c1222,stroke:#64748b,stroke-width:2px,color:#94a3b8
+    style L2 fill:#0c1222,stroke:#06b6d4,stroke-width:2px,color:#94a3b8
+    style L3 fill:#0c1222,stroke:#3b82f6,stroke-width:2px,color:#94a3b8
+    style L4 fill:#0c1222,stroke:#8b5cf6,stroke-width:2px,color:#94a3b8
+    style L5 fill:#0c1222,stroke:#a855f7,stroke-width:2px,color:#94a3b8
+    style L6 fill:#0c1222,stroke:#ec4899,stroke-width:2px,color:#94a3b8
+    style L7 fill:#0c1222,stroke:#f43f5e,stroke-width:2px,color:#94a3b8
+    style L8 fill:#0c1222,stroke:#f59e0b,stroke-width:2px,color:#94a3b8
+    style L9 fill:#0c1222,stroke:#ef4444,stroke-width:2px,color:#94a3b8
+
+    style CORS fill:#1e293b,stroke:#64748b,color:#e2e8f0
+    style HTTPS fill:#1e293b,stroke:#06b6d4,color:#e2e8f0
+    style PWD fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
+    style OAUTH fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
+    style ACCESS fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
+    style REFRESH fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
+    style OTP fill:#1e293b,stroke:#a855f7,color:#e2e8f0
+    style RBAC fill:#1e293b,stroke:#ec4899,color:#e2e8f0
+    style BRUTE fill:#1e293b,stroke:#f43f5e,color:#e2e8f0
+    style DEVICE fill:#1e293b,stroke:#f43f5e,color:#e2e8f0
+    style IDEMP fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
+    style LEDGER fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
+    style BLACKLIST fill:#1e293b,stroke:#ef4444,color:#e2e8f0
+```
 
 <br />
+
+### JWT Dual-Token Rotation Lifecycle
+
+> Access tokens are ephemeral (in-memory only), while refresh tokens are transported exclusively via `HttpOnly` cookies — making them invisible to JavaScript and immune to XSS extraction.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as 👤 User
+    participant C as 🖥️ React SPA
+    participant S as ⚙️ Express API
+    participant DB as 🗄️ MongoDB
+
+    rect rgb(15, 23, 42)
+        Note over U,DB: 🔐 Initial Authentication
+        U->>C: Submit email + password
+        C->>S: POST /api/auth/login
+        S->>DB: Verify bcryptjs hash
+        S->>S: Sign Access Token (15m expiry)
+        S->>S: Sign Refresh Token (7d expiry)
+        S-->>C: Access Token (JSON body)<br/>+ Refresh Token (Set-Cookie: HttpOnly)
+        Note over C: Access Token stored in<br/>volatile memory (React state)<br/>Never touches localStorage
+    end
+
+    rect rgb(20, 33, 30)
+        Note over U,DB: 🔄 Silent Token Rotation (every 15 min)
+        C->>S: GET /api/auth/refresh<br/>(Cookie auto-attached by browser)
+        S->>S: Verify Refresh Token signature
+        S->>DB: Check token not in BlackList
+        S->>S: Issue NEW Access Token
+        S->>S: Issue NEW Refresh Token (Rotation)
+        S->>DB: Blacklist OLD Refresh Token
+        S-->>C: New Access Token (JSON)<br/>+ New Refresh Token (Set-Cookie)
+    end
+
+    rect rgb(30, 15, 15)
+        Note over U,DB: 🚪 Secure Logout
+        C->>S: POST /api/auth/logout
+        S->>DB: Blacklist current Access Token
+        S->>DB: Blacklist current Refresh Token
+        S-->>C: Clear cookies + 200 OK
+    end
+```
+
+<br />
+
+### Threat Mitigation Matrix
+
+<table>
+<tr>
+<th>🎯 Attack Vector</th>
+<th>🛡️ Countermeasure</th>
+<th>⚙️ Implementation</th>
+</tr>
+<tr>
+<td>
+
+**Cross-Site Scripting (XSS)**
+<br/><sub>Attacker injects script to steal tokens</sub>
+
+</td>
+<td>
+
+HttpOnly Cookie Transport
+
+</td>
+<td>
+
+Refresh tokens are set with `HttpOnly`, `Secure`, and `SameSite=Strict` flags — JavaScript has **zero access**. Access tokens live only in volatile React state (never `localStorage`).
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Credential Stuffing**
+<br/><sub>Automated login attempts with leaked passwords</sub>
+
+</td>
+<td>
+
+Progressive Account Lockout
+
+</td>
+<td>
+
+After **5 consecutive failed attempts**, the account enters a `Locked` state with a cooldown timer:
+```
+lockUntil = Date.now() + (15 * 60 * 1000)
+```
+All login attempts are rejected until the timer expires.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Token Replay Attack**
+<br/><sub>Stolen token reused from another device</sub>
+
+</td>
+<td>
+
+Single-Use Token Rotation + Blacklist
+
+</td>
+<td>
+
+Every refresh operation **invalidates the previous token** and issues a new pair. Used tokens are written to the `BlackListToken` collection. Replayed tokens are immediately rejected.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Session Hijacking**
+<br/><sub>Attacker takes over an active session</sub>
+
+</td>
+<td>
+
+Device Fingerprint Alerts
+
+</td>
+<td>
+
+The system captures the `User-Agent` string on each login. If a new device signature is detected, a **security alert email** is dispatched via Gmail OAuth2 (Nodemailer) notifying the account owner.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Double-Spending**
+<br/><sub>Network retry causes duplicate transactions</sub>
+
+</td>
+<td>
+
+Idempotency Key Enforcement
+
+</td>
+<td>
+
+Every transfer requires a unique `idempotencyKey` (UUID). The field has a **unique index** in MongoDB — duplicate submissions return the cached result instead of processing twice.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Balance Tampering**
+<br/><sub>Direct database manipulation of account balance</sub>
+
+</td>
+<td>
+
+Immutable Ledger + Computed Balances
+
+</td>
+<td>
+
+Balances are **never stored as a mutable field**. They are computed in real-time via aggregation: `SUM(credits) - SUM(debits)`. Mongoose pre-hooks block all `update`, `delete`, and `replace` operations on ledger documents.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Cross-Origin Request Forgery**
+<br/><sub>Malicious site makes requests on behalf of user</sub>
+
+</td>
+<td>
+
+Strict CORS + Credential Scoping
+
+</td>
+<td>
+
+```javascript
+cors({
+  origin: "http://localhost:5173",
+  credentials: true
+})
+```
+Only the registered frontend origin can make credentialed requests. Wildcard origins are explicitly denied.
+
+</td>
+</tr>
+</table>
+
+<br />
+
+### Role-Based Access Control (RBAC)
+
+```mermaid
+graph TD
+    subgraph Roles ["👥 System Roles"]
+        direction LR
+        GUEST["🔓 Guest<br/><i>Register · Verify Email</i>"]
+        CUSTOMER["👤 Customer<br/><i>Accounts · Transfers<br/>Beneficiaries · Goals</i>"]
+        ADMIN["🛡️ Administrator<br/><i>KYC Review · Reversals<br/>Freeze Accounts · Stats</i>"]
+        SYSTEM["⚙️ System<br/><i>Seed Balances<br/>Reconciliation</i>"]
+    end
+
+    subgraph Access ["🔐 Route Protection"]
+        PUBLIC["Public Routes<br/><code>/auth/register</code><br/><code>/auth/login</code>"]
+        PROTECTED["Protected Routes<br/><code>/account/*</code><br/><code>/transaction/*</code>"]
+        ADMIN_ONLY["Admin-Only Routes<br/><code>/admin/*</code><br/><code>/kyc/review</code>"]
+    end
+
+    GUEST --> PUBLIC
+    CUSTOMER --> PROTECTED
+    ADMIN --> ADMIN_ONLY
+    ADMIN --> PROTECTED
+
+    style Roles fill:#0f172a,stroke:#6366f1,stroke-width:2px,color:#e2e8f0
+    style Access fill:#1c1917,stroke:#f59e0b,stroke-width:2px,color:#e2e8f0
+    style GUEST fill:#1e293b,stroke:#64748b,color:#f1f5f9
+    style CUSTOMER fill:#1e293b,stroke:#3b82f6,color:#f1f5f9
+    style ADMIN fill:#1e293b,stroke:#ef4444,color:#f1f5f9
+    style SYSTEM fill:#1e293b,stroke:#10b981,color:#f1f5f9
+    style PUBLIC fill:#292524,stroke:#22c55e,color:#f1f5f9
+    style PROTECTED fill:#292524,stroke:#f59e0b,color:#f1f5f9
+    style ADMIN_ONLY fill:#292524,stroke:#ef4444,color:#f1f5f9
+```
+
+<br />
+
+### Cookie Security Configuration
+
+```
+┌────────────────────────────────────────────────────────┐
+│              Refresh Token Cookie Flags                 │
+├──────────────┬─────────────────────────────────────────┤
+│   HttpOnly   │  ✅  Invisible to document.cookie / JS  │
+│   Secure     │  ✅  Transmitted only over HTTPS         │
+│   SameSite   │  ✅  Strict — blocks cross-site sending  │
+│   Path       │  /api/auth — scoped to auth endpoints    │
+│   Max-Age    │  7 days (604800 seconds)                 │
+└──────────────┴─────────────────────────────────────────┘
+```
+
+<br />
+
 
 ## 🌐 Internationalization
 
@@ -742,7 +1012,6 @@ Adding a new language requires only two steps:
 - [x] Multi-language support (5 languages)
 - [x] Admin dashboard with system-wide statistics
 - [x] Google OAuth 2.0 integration
-- [x] 3D animated UI elements (Three.js / React Three Fiber)
 - [ ] Real-time chat support (WebSocket integration)
 - [ ] Voice-activated conversational banking ("Hey Nexa")
 - [ ] Biometric authentication (WebAuthn / FIDO2)

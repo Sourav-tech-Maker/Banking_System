@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   Settings,
   User,
+  UsersRound,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +45,7 @@ export default function AppSidebar({ activeView = "dashboard", onNavigate }) {
     { title: "Dashboard", icon: LayoutDashboard, view: "dashboard" },
     { title: "Transactions", icon: ReceiptText, view: "transactions" },
     { title: "Open Account", icon: Landmark, view: "open-account" },
+    { title: "Beneficiaries", icon: UsersRound, view: "beneficiaries" },
     { title: "Savings Goals", icon: PiggyBank, view: "goals" },
     { title: "KYC Verification", icon: ShieldCheck, view: "kyc" },
     { title: "Profile", icon: User, view: "profile" },

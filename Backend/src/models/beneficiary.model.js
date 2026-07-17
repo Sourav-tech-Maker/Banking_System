@@ -62,7 +62,7 @@ const beneficiarySchema = new mongoose.Schema({
 
 }, { timestamps: true })
 
-beneficiarySchema.index({ userId: 1, accountNumber: 1 }, { unique: true })
+beneficiarySchema.index({ userId: 1, accountId: 1 }, { unique: true })
 const beneficiaryModel = mongoose.model('Beneficiary', beneficiarySchema)
 
 module.exports = beneficiaryModel;

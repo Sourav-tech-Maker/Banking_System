@@ -2,6 +2,7 @@ const express = require('express')
 const multer = require('multer')
 const Kyc = require('../controller/Kyc.controller')
 const authmiddleware = require('../middleware/auth.middleware')
+const { dbWriteLimiter } = require('../middleware/rateLimiter.middleware')
 const Router = express.Router();
 
 const upload = multer({
@@ -37,7 +38,7 @@ const uploadKycDocument = (req, res, next) => {
 };
 
 // POST /api/Kyc/register-kyc
-Router.post('/register-kyc', authmiddleware, uploadKycDocument, Kyc.registerKyc)
+Router.post('/register-kyc', authmiddleware, dbWriteLimiter, uploadKycDocument, Kyc.registerKyc)
 // POST /api/Kyc/verify-kyc
-Router.post('/verify-kyc', Kyc.verifyKyc)
+Router.post('/verify-kyc', dbWriteLimiter, Kyc.verifyKyc)
 module.exports = Router

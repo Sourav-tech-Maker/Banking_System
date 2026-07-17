@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Custom-Security-Scanner",
+          "rules": [
+            {
+              "id": "js/unrate-limited-db-route",
+              "name": "unrate-limited-db-route",
+              "shortDescription": {
+                "text": "Route handler is not rate-limited."
+              },
+              "fullDescription": {
+                "text": "This route handler performs a database access, but is not rate-limited."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://github.com/security-alerts"
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "js/unrate-limited-db-route",
+          "message": {
+            "text": "This route handler performs a database access, but is not rate-limited."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Backend/src/routes/goals.routes.js"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 43,
+                  "endColumn": 69
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

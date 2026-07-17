@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YONO Bank - Project Documentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 13pt;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 25mm 25mm 30mm 30mm;
+            background: #fff;
+            position: relative;
+        }
+
+    
+
+        .page-break {
+            page-break-after: always;
+            border-bottom: 1px dashed #ccc;
+            margin: 20px 0;
+        }
+
+        .chapter-title {
+            font-size: 13pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 12pt;
+            margin-top: 6pt;
+        }
+
+        
+        .level-1 {
+            margin-left: 24pt; 
+            margin-top: 12pt;
+            margin-bottom: 12pt;
+        }
+
+        .level-2 {
+            margin-left: 24pt;
+            margin-top: 8pt;
+            margin-bottom: 8pt;
+        }
+
+        .level-3 {
+            margin-left: 24pt; 
+            margin-top: 8pt;
+            margin-bottom: 8pt;
+        }
+
+        
+        p {
+            text-align: justify;
+            margin-bottom: 8pt;
+        }
+
+        
+        ul, ol {
+            margin-left: 20pt;
+            margin-bottom: 8pt;
+        }
+
+        li {
+            margin-bottom: 4pt;
+        }
+
+        
+        table {
+            border-collapse: collapse;
+            margin: 12pt 0;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6pt 10pt;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13pt;
+        }
+
+        th {
+            font-weight: bold;
+            background-color: #f5f5f5;
+        }
+
+        
+        .note {
+            margin-top: 10pt;
+            margin-bottom: 10pt;
+            border-left: 3px solid #000;
+            padding-left: 10pt;
+        }
+
+        .note-label {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        
+        .figure-container {
+            text-align: center;
+            margin: 16pt 0;
+        }
+
+        .figure-caption {
+            text-align: center;
+            font-size: 12pt;
+            margin-top: 8pt;
+            font-weight: bold;
+        }
+
+        
+        .diagram-svg {
+            display: block;
+            margin: 20pt auto;
+            max-width: 100%;
+        }
+
+        
+        table.gantt-table th,
+        table.gantt-table td {
+            font-size: 11pt;
+            padding: 4pt 6pt;
+            text-align: center;
+        }
+
+        table.gantt-table td.filled {
+            background-color: #4472C4;
+        }
+
+        table.gantt-table td.task-name {
+            text-align: left;
+            font-size: 11pt;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+            .page {
+                margin: 0;
+                padding: 20mm 20mm 25mm 25mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+            .page-break {
+                border: none;
+            }
+        }
+
+        @media screen {
+            .page {
+                box-shadow: 0 0 10px rgba(0,0,0,0.15);
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+<div class="page">
+    
+    <div class="level-1">
+        <p><b>1.1 Description of the Software System under Study:</b> YONO Bank (You Only Need One) is a production-grade, full-stack digital banking application designed to provide secure and comprehensive online banking services. The proposed software system aims to deliver a seamless digital banking experience encompassing user authentication, account management, fund transfers, KYC verification, beneficiary management, savings goals tracking, and administrative controls. The intended operations include user registration and verification, opening savings and current accounts, performing ACID-compliant fund transfers with double-entry ledger bookkeeping, KYC document submission and review, beneficiary management with OTP verification, savings goal creation and funding, and comprehensive admin panel operations. The system involves the following users with their respective roles:</p>
+        
+        <div class="level-2">
+            <ul>
+                <li><b>Customer:</b> End-user who registers, manages accounts, performs transactions, submits KYC documents, adds beneficiaries, and tracks savings goals.</li>
+                <li><b>Admin:</b> Privileged user who reviews KYC applications, manages account statuses (freeze/close/reactivate), reverses transactions, and monitors system-wide statistics.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 1.2 Data Collection -->
+    <div class="level-1">
+        <p><b>1.2 Data Collection:</b> The following reference websites and resources were considered for the creation of the proposed software:</p>
+        
+        <div class="level-2">
+            <ul>
+                <li>SBI YONO Application (<a href="https://www.sbi.co.in/web/yono" target="_blank">https://www.sbi.co.in/web/yono</a>) – for banking workflow and UI reference</li>
+                <li>MongoDB Atlas Documentation (<a href="https://www.mongodb.com/docs/atlas/" target="_blank">https://www.mongodb.com/docs/atlas/</a>) – for cloud database architecture</li>
+                <li>Express.js Official Documentation (<a href="https://expressjs.com/" target="_blank">https://expressjs.com/</a>) – for backend framework implementation</li>
+                <li>React.js Official Documentation (<a href="https://react.dev/" target="_blank">https://react.dev/</a>) – for frontend SPA development</li>
+                <li>JWT.io (<a href="https://jwt.io/" target="_blank">https://jwt.io/</a>) – for authentication token implementation reference</li>
+                <li>ImageKit Documentation (<a href="https://docs.imagekit.io/" target="_blank">https://docs.imagekit.io/</a>) – for CDN-based document storage</li>
+                <li>Nodemailer Documentation (<a href="https://nodemailer.com/" target="_blank">https://nodemailer.com/</a>) – for email service integration</li>
+            </ul>
+            <p style="margin-top: 10pt; margin-bottom: 6pt; font-weight: bold;">The following modules are selected for study:</p>
+            <ol>
+                <li>User Authentication &amp; Authorization Module</li>
+                <li>Account Management Module</li>
+                <li>Transaction &amp; Ledger Module</li>
+                <li>KYC Verification Module</li>
+                <li>Beneficiary Management Module</li>
+                <li>Savings Goals Module</li>
+                <li>Dashboard &amp; Analytics Module</li>
+                <li>Admin Panel Module</li>
+                <li>Email Notification Module</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <p><b>1.3 Tools/Platforms:</b></p>
+        
+        <div class="level-2">
+            <p><i>1.3.1&nbsp;&nbsp;Hardware specifications </i></p>
+            
+            <div class="level-3">
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Minimum Requirement</th>
+                    </tr>
+                    <tr>
+                        <td>Processor</td>
+                        <td>Intel Core i3 (8th Gen) or AMD Ryzen 3 equivalent or higher</td>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>4 GB (8 GB Recommended)</td>
+                    </tr>
+                    <tr>
+                        <td>Hard Disk / SSD</td>
+                        <td>256 GB SSD or 500 GB HDD (minimum 10 GB free space)</td>
+                    </tr>
+                    <tr>
+                        <td>Display</td>
+                        <td>1366 × 768 resolution or higher</td>
+                    </tr>
+                    <tr>
+                        <td>Network</td>
+                        <td>Broadband Internet connection (for MongoDB Atlas &amp; APIs)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p><i>1.3.2&nbsp;&nbsp;Software specifications</i></p>
+            
+            <div class="level-3">
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Technology / Version</th>
+                    </tr>
+                    <tr>
+                        <td>Operating System</td>
+                        <td>Windows 10/11, macOS, or Linux (Ubuntu 20.04+)</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Environment</td>
+                        <td>Node.js v22.x</td>
+                    </tr>
+                    <tr>
+                        <td>Front End</td>
+                        <td>React 19.2, Vite 8.1, Tailwind CSS 4.3, shadcn/ui 4.12</td>
+                    </tr>
+                    <tr>
+                        <td>Back End</td>
+                        <td>Express.js 5.2, Mongoose 9.7</td>
+                    </tr>
+                    <tr>
+                        <td>Database</td>
+                        <td>MongoDB Atlas (Cloud - M0 Free Tier or higher)</td>
+                    </tr>
+                    <tr>
+                        <td>Authentication</td>
+                        <td>JSON Web Token 9.0, Passport.js 0.7 (Google OAuth 2.0)</td>
+                    </tr>
+                    <tr>
+                        <td>CDN / File Storage</td>
+                        <td>ImageKit (for KYC document uploads)</td>
+                    </tr>
+                    <tr>
+                        <td>Email Service</td>
+                        <td>Nodemailer 9.0 (Gmail OAuth2 SMTP)</td>
+                    </tr>
+                    <tr>
+                        <td>Package Manager</td>
+                        <td>npm v9.0.0 or later</td>
+                    </tr>
+                    <tr>
+                        <td>Version Control</td>
+                        <td>Git v2.30 or later, GitHub</td>
+                    </tr>
+                    <tr>
+                        <td>Code Editor</td>
+                        <td>Visual Studio Code (Latest)</td>
+                    </tr>
+                    <tr>
+                        <td>Browser</td>
+                        <td>Google Chrome (Latest), Firefox, or Edge</td>
+                    </tr>
+                </table>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <p class="note"><span class="note-label">Note:</span> <b> The project has been developed using the MERN Stack (MongoDB, Express.js, React.js, Node.js) platform with JavaScript as the primary programming language.</b><br>
+        </p>
+    </div>
+
+    <div class="level-1">
+        <p><b>1.4 Project Planning:</b> </p>
+        
+        <div class="level-2">
+            <p>The following Gantt chart represents the project timeline and task distribution:</p>
+            <table class="gantt-table">
+                <tr>
+                    <th style="text-align:left; width:200pt;">Task / Activity</th>
+                    <th>Week 1</th>
+                    <th>Week 2</th>
+                    <th>Week 3</th>
+                    <th>Week 4</th>
+                    <th>Week 5</th>
+                    <th>Week 6</th>
+                    <th>Week 7</th>
+                    <th>Week 8</th>
+                    <th>Week 9</th>
+                    <th>Week 10</th>
+                </tr>
+                <tr>
+                    <td class="task-name">Requirement Analysis &amp; SRS</td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">System Design &amp; Architecture</td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Database Schema Design</td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Backend API Development</td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Authentication &amp; Security</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Frontend UI Development</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Integration &amp; Testing</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Bug Fixing &amp; Optimization</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="task-name">Documentation &amp; Deployment</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="filled"></td>
+                    <td class="filled"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+    <div class="level-1">
+        <p><b>1.5 Methodology:</b></p>
+        
+        <div class="level-2">
+            <p><i>1.5.1&nbsp;&nbsp;SDLC Model to be used:</i> <br> The <b>Agile (Iterative) Model</b> has been adopted for the development of the YONO Banking System.</p>
+            
+            <p style="margin-top: 12pt;"><i>1.5.2&nbsp;&nbsp;Justification for the Selection of Model:</i> <br> The Agile (Iterative) Model is selected for the following reasons:</p>
+            <div class="level-3">
+                <ol>
+                    <li><b>Incremental Development:</b> The banking system comprises multiple modules (Authentication, Accounts, Transactions, KYC, Beneficiary, Goals, Dashboard, Admin) which can be developed and tested incrementally in sprints. Each sprint delivers a working module that can be independently tested and reviewed.</li>
+                    <li><b>Flexibility in Requirements:</b> Banking requirements often evolve during development. The Agile model allows for requirement modifications between sprints without disrupting the entire project timeline. For instance, the addition of the savings goals module and admin transaction reversal feature were incorporated as enhancements in later sprints.</li>
+                    <li><b>Continuous Integration &amp; Feedback:</b> Each iteration produces a working prototype that can be demonstrated to the project guide, enabling early detection of issues and course corrections. The double-entry ledger system, for example, was refined across multiple iterations based on testing feedback.</li>
+                    <li><b>Risk Mitigation:</b> Critical modules like the ACID-compliant transaction system and JWT dual-token authentication were developed and tested early in the project lifecycle, ensuring that the most complex and risk-prone components received adequate attention.</li>
+                    <li><b>Parallel Development:</b> The MERN stack architecture supports parallel development of frontend and backend components. While backend APIs were being developed, frontend UI components were simultaneously built using mock data, significantly reducing the overall development time.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <hr style="border: 1px solid #000; margin: 15pt 0;">
+
+    <div class="chapter-title">Chapter-2: Software Requirement Specification (SRS)</div>
+
+    <div class="level-1">
+        <p><b>2.1 Description of Information System (Block Diagram):</b> The YONO Banking System is a comprehensive digital banking platform that manages user accounts, financial transactions, KYC verification, and administrative operations. The functioning of the information system is described below in narrative form in detail. The system operates on a layered architecture pattern with strict separation of concerns. The Client Layer (React 19 SPA) communicates with the API Gateway Layer (Express 5.2) via HTTPS REST JSON requests with HttpOnly cookies. The API Gateway routes requests through the Core Engine (Middleware → Controllers → Services) which interacts with the Data &amp; Infrastructure layer (MongoDB Atlas, ImageKit CDN, Gmail SMTP).</p>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <div class="level-2">
+
+            <svg class="diagram-svg" width="620" height="420" viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg">
+
+                <text x="30" y="195" font-family="Times New Roman" font-size="12" text-anchor="middle">Customer</text>
+
+
+                <line x1="60" y1="190" x2="95" y2="150" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="60" y="145" font-family="Times New Roman" font-size="9">Registration</text>
+                <text x="60" y="155" font-family="Times New Roman" font-size="9">Details</text>
+
+
+                <line x1="60" y1="195" x2="95" y2="230" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="55" y="240" font-family="Times New Roman" font-size="9">Transaction</text>
+                <text x="55" y="250" font-family="Times New Roman" font-size="9">Request</text>
+
+
+                <rect x="100" y="120" width="110" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="155" y="140" font-family="Times New Roman" font-size="11" text-anchor="middle">Registration</text>
+                <text x="155" y="155" font-family="Times New Roman" font-size="11" text-anchor="middle">&amp; Auth Process</text>
+
+
+                <line x1="210" y1="142" x2="250" y2="142" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="215" y="135" font-family="Times New Roman" font-size="9">User Details</text>
+
+
+                <rect x="250" y="120" width="100" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="300" y="140" font-family="Times New Roman" font-size="11" text-anchor="middle">KYC</text>
+                <text x="300" y="155" font-family="Times New Roman" font-size="11" text-anchor="middle">Verification</text>
+
+
+                <line x1="350" y1="142" x2="390" y2="142" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="355" y="135" font-family="Times New Roman" font-size="9">Approved</text>
+
+
+                <rect x="390" y="120" width="110" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="445" y="140" font-family="Times New Roman" font-size="11" text-anchor="middle">Account</text>
+                <text x="445" y="155" font-family="Times New Roman" font-size="11" text-anchor="middle">Management</text>
+
+
+                <rect x="100" y="210" width="110" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="155" y="230" font-family="Times New Roman" font-size="11" text-anchor="middle">Transaction</text>
+                <text x="155" y="245" font-family="Times New Roman" font-size="11" text-anchor="middle">Process</text>
+
+
+                <line x1="210" y1="232" x2="250" y2="232" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="215" y="225" font-family="Times New Roman" font-size="9">Verified</text>
+                <text x="215" y="215" font-family="Times New Roman" font-size="9">Transfer</text>
+
+
+                <rect x="250" y="210" width="100" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="300" y="230" font-family="Times New Roman" font-size="11" text-anchor="middle">Ledger</text>
+                <text x="300" y="245" font-family="Times New Roman" font-size="11" text-anchor="middle">Entry (Immutable)</text>
+
+
+                <line x1="350" y1="232" x2="390" y2="232" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+
+                <rect x="390" y="210" width="110" height="45" fill="white" stroke="black" stroke-width="1"/>
+                <text x="445" y="230" font-family="Times New Roman" font-size="11" text-anchor="middle">Transaction</text>
+                <text x="445" y="245" font-family="Times New Roman" font-size="11" text-anchor="middle">History</text>
+
+
+                <line x1="500" y1="232" x2="570" y2="195" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="530" y="195" font-family="Times New Roman" font-size="9">Statement</text>
+
+
+                <line x1="500" y1="142" x2="570" y2="180" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="530" y="155" font-family="Times New Roman" font-size="9">Account</text>
+                <text x="530" y="165" font-family="Times New Roman" font-size="9">Details</text>
+
+
+                <text x="590" y="195" font-family="Times New Roman" font-size="12" text-anchor="middle">Customer</text>
+
+
+                <line x1="155" y1="210" x2="155" y2="165" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+
+                <line x1="300" y1="255" x2="300" y2="285" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="310" y="280" font-family="Times New Roman" font-size="9">Balance</text>
+                <text x="310" y="270" font-family="Times New Roman" font-size="9">Check</text>
+
+
+                <rect x="100" y="300" width="110" height="40" fill="white" stroke="black" stroke-width="1"/>
+                <text x="155" y="325" font-family="Times New Roman" font-size="11" text-anchor="middle">Beneficiary List</text>
+
+
+                <rect x="250" y="290" width="100" height="40" fill="white" stroke="black" stroke-width="1"/>
+                <text x="300" y="315" font-family="Times New Roman" font-size="11" text-anchor="middle">MongoDB Atlas</text>
+
+
+                <rect x="390" y="290" width="110" height="40" fill="white" stroke="black" stroke-width="1"/>
+                <text x="445" y="315" font-family="Times New Roman" font-size="11" text-anchor="middle">Goals &amp; Savings</text>
+
+
+                <text x="300" y="380" font-family="Times New Roman" font-size="12" text-anchor="middle" font-weight="bold">Admin</text>
+                <line x1="300" y1="330" x2="300" y2="370" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="310" y="355" font-family="Times New Roman" font-size="9">Review &amp;</text>
+                <text x="310" y="365" font-family="Times New Roman" font-size="9">Manage</text>
+
+
+                <line x1="155" y1="300" x2="155" y2="255" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+                <text x="115" y="285" font-family="Times New Roman" font-size="9">Verify</text>
+                <text x="115" y="295" font-family="Times New Roman" font-size="9">Beneficiary</text>
+
+
+                <line x1="445" y1="255" x2="445" y2="290" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+                    </marker>
+                </defs>
+            </svg>
+
+            <p class="figure-caption">Fig 2.1 Block Diagram for YONO Banking Information System</p>
+
+
+            <p style="margin-top: 15pt;"><i>2.1.1&nbsp;&nbsp;<b>Product Features:</b></i> The following major processes have been identified in the YONO Banking System:</p>
+            
+            <div class="level-3">
+                <ol>
+                    <li><b>'User Registration &amp; Authentication'</b> – Handles user sign-up, email OTP verification, login with brute-force protection, JWT dual-token rotation, Google OAuth 2.0 sign-in, and secure logout with token blacklisting.</li>
+                    <li><b>'KYC Verification'</b> – Manages digital KYC document submission via ImageKit CDN, admin review pipeline (Approve/Reject/Re-submit), and KYC status tracking.</li>
+                    <li><b>'Account Management'</b> – Handles opening of Savings &amp; Current accounts (gated by KYC approval), account lifecycle management (Active → Frozen → Closed), and balance computation via ledger aggregation.</li>
+                    <li><b>'Transaction Processing'</b> – Core process implementing ACID-compliant fund transfers using MongoDB transaction sessions, idempotent transactions with unique idempotencyKey, and double-entry immutable ledger entries.</li>
+                    <li><b>'Beneficiary Management'</b> – Manages OTP-verified beneficiary registration workflow, beneficiary listing, and validated transfer targets.</li>
+                    <li><b>'Savings Goals'</b> – Handles goal creation, funding from linked accounts, and progress tracking with visual analytics.</li>
+                    <li><b>'Dashboard &amp; Analytics'</b> – Aggregation pipelines for spending charts, statistics cards, recent transactions, and AI-powered financial insights.</li>
+                    <li><b>'Admin Panel'</b> – Full admin control center for KYC review, account status management, transaction reversals with ledger audit trail, and system-wide metrics monitoring.</li>
+                    <li><b>'Email Notification Service'</b> – Nodemailer-based transactional email delivery for OTPs, security alerts, device detection notifications, and account status updates.</li>
+                    <li><b>'Report Generation'</b> – Transaction history reports with pagination, spending analytics, and downloadable account statements.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <div class="level-2"> 
+            <p><i>2.1.2&nbsp;&nbsp;<b>Input/ Output Data elements:</b></i> The data elements/fields for all processes included in Input and Output are catalogued in the following tables:</p>
+            
+            <div class="level-3">
+                <table>
+                    <tr>
+                        <th style="width: 150pt;">Input/Output Name</th>
+                        <th>Data Elements</th>
+                    </tr>
+                    <tr>
+                        <td>User Registration (Input)</td>
+                        <td>Full Name, Email Address, Password, Confirm Password, Role (Customer/Admin), RBAC Registration Key (for Admin registration only).</td>
+                    </tr>
+                    <tr>
+                        <td>OTP Verification (Input)</td>
+                        <td>Email Address, OTP Code (6-digit, SHA-256 hashed before storage).</td>
+                    </tr>
+                    <tr>
+                        <td>Login (Input)</td>
+                        <td>Email Address, Password, Device Information (User-Agent).</td>
+                    </tr>
+                    <tr>
+                        <td>Authentication Token (Output)</td>
+                        <td>Access Token (JWT, 15-min expiry, in-memory), Refresh Token (JWT, 7-day expiry, HttpOnly Cookie), User ID, User Role, Email.</td>
+                    </tr>
+                    <tr>
+                        <td>KYC Submission (Input)</td>
+                        <td>Document Type (Aadhaar/PAN/Passport), Document Number, Document Image File (uploaded to ImageKit CDN), User ID.</td>
+                    </tr>
+                    <tr>
+                        <td>KYC Status (Output)</td>
+                        <td>KYC Application ID, Status (Pending/Approved/Rejected), Document Type, Document URL (ImageKit CDN), Submission Date, Review Date, Admin Remarks.</td>
+                    </tr>
+                    <tr>
+                        <td>Account Opening (Input)</td>
+                        <td>Account Type (Savings/Current), Currency (INR), User ID (from JWT).</td>
+                    </tr>
+                    <tr>
+                        <td>Account Details (Output)</td>
+                        <td>Account ID, Account Number (unique), Account Type, Status (Active/Frozen/Closed), Currency, Balance (computed from ledger aggregation), Creation Date.</td>
+                    </tr>
+                    <tr>
+                        <td>Fund Transfer (Input)</td>
+                        <td>From Account ID, To Account ID, Amount, Idempotency Key (unique), Description/Narration.</td>
+                    </tr>
+                    <tr>
+                        <td>Transaction Receipt (Output)</td>
+                        <td>Transaction ID, From Account Number, To Account Number, Amount, Status (Pending/Completed/Failed/Reversed), Idempotency Key, Timestamp, Ledger Entry IDs (Debit &amp; Credit).</td>
+                    </tr>
+                </table>
+
+                <table style="margin-top: 20px;">
+                    <tr>
+                        <th style="width: 150pt;">Input/Output Name</th>
+                        <th>Data Elements</th>
+                    </tr>
+                    <tr>
+                        <td>Beneficiary Addition (Input)</td>
+                        <td>Beneficiary Name, Beneficiary Account Number, Bank Name/IFSC, Relationship, OTP for Verification.</td>
+                    </tr>
+                    <tr>
+                        <td>Beneficiary List (Output)</td>
+                        <td>Beneficiary ID, Name, Account Number, Bank Details, Verification Status, Added Date.</td>
+                    </tr>
+                    <tr>
+                        <td>Savings Goal (Input)</td>
+                        <td>Goal Name, Target Amount, Source Account ID, Funding Amount.</td>
+                    </tr>
+                    <tr>
+                        <td>Goal Progress (Output)</td>
+                        <td>Goal ID, Goal Name, Target Amount, Current Amount, Progress Percentage, Creation Date, Last Funded Date.</td>
+                    </tr>
+                    <tr>
+                        <td>Dashboard (Output)</td>
+                        <td>Total Balance (all accounts), Monthly Spending, Monthly Income, Number of Transactions, Spending by Category Chart Data, Recent Transactions List, AI Insights.</td>
+                    </tr>
+                    <tr>
+                        <td>Admin Panel (Output)</td>
+                        <td>Total Users, Total Accounts, Pending KYC Applications, System-wide Transaction Volume, KYC Application Details, Account Status Management Interface.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <div class="level-2">
+        
+            <p><i>2.1.3&nbsp;&nbsp;<b>Procedures/rules/ mathematical relationships:</b></i> The following procedures, rules, and mathematical relationships have been identified for the YONO Banking System:</p>
+            
+            <div class="level-3">
+                <p><b>(i) Balance Computation (Double-Entry Ledger):</b> The account balance is never stored as a static field. Instead, it is computed in real-time by aggregating all immutable ledger entries associated with the account: <b>Account Balance = Σ (Credit Entries) − Σ (Debit Entries)</b>. This ensures that the balance is always consistent with the ledger history and eliminates the possibility of balance discrepancies due to race conditions.</p>
+
+                <p><b>(ii) Transaction Processing Rules (ACID Compliance):</b> Each fund transfer must create exactly two ledger entries: one DEBIT entry for the sender and one CREDIT entry for the receiver. The entire transfer operation is wrapped in a MongoDB transaction session. If any step fails, the entire operation is rolled back (atomicity). Before processing, the system checks: <b>Sender's Balance ≥ Transfer Amount</b>. If insufficient, the transaction is rejected with a 400 status. <b>Idempotency Rule:</b> Each transaction must include a unique <code>idempotencyKey</code>. If a duplicate key is detected, the cached result is returned instead of processing a new transfer.</p>
+
+                <p><b>(iii) Password Hashing Policy:</b> User passwords are hashed using <b>bcryptjs</b> with a configurable number of salt rounds before storage. The original password is never stored in the database. During login, the submitted password is compared against the stored hash using a constant-time comparison function.</p>
+
+                <p><b>(iv) OTP Generation &amp; Verification:</b> OTPs are generated as 6-digit random numbers. Before storage, the OTP is hashed using <b>SHA-256</b> algorithm. The hashed OTP is stored in the database with a TTL (Time-To-Live) of 10 minutes. During verification, the submitted OTP is hashed and compared against the stored hash.</p>
+
+                <p><b>(v) JWT Token Lifecycle:</b>
+                    <br>• <b>Access Token:</b> Signed with JWT_SECRET, expiry = 15 minutes, stored in volatile memory (React state).
+                    <br>• <b>Refresh Token:</b> Signed with JWT_SECRET, expiry = 7 days, transported via HttpOnly Secure cookies.
+                    <br>• <b>Rotation Rule:</b> On each token refresh, the old refresh token is blacklisted in the database, and a new pair of tokens is issued.
+                </p>
+
+                <p><b>(vi) Brute-Force Protection Policy:</b> If Login Attempts ≥ 5 within a session → Account is locked for 30 minutes. The loginAttempts counter is reset upon successful login.</p>
+
+                <p><b>(vii) Savings Goal Progress Calculation:</b> Progress (%) = (Current Funded Amount / Target Amount) × 100.</p>
+
+                <p><b>(viii) Discount / Fee Policy:</b> Currently, the system does not charge transaction fees for inter-account transfers. However, the architecture supports the addition of fee calculation rules in future iterations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <div class="level-2">
+            <p><i>2.1.4&nbsp;&nbsp;<b>Decision Table </b></i> The following decision table outlines the rules for KYC-based account operations:</p>
+            
+            <div class="level-3">
+                <table>
+                    <tr>
+                        <th colspan="5" style="text-align:center;">Decision Table: Account Operations based on KYC &amp; Account Status</th>
+                    </tr>
+                    <tr>
+                        <th>Conditions</th>
+                        <th>Rule 1</th>
+                        <th>Rule 2</th>
+                        <th>Rule 3</th>
+                        <th>Rule 4</th>
+                    </tr>
+                    <tr>
+                        <td>KYC Status = Approved</td>
+                        <td style="text-align:center;">Y</td>
+                        <td style="text-align:center;">N</td>
+                        <td style="text-align:center;">Y</td>
+                        <td style="text-align:center;">Y</td>
+                    </tr>
+                    <tr>
+                        <td>Account Status = Active</td>
+                        <td style="text-align:center;">Y</td>
+                        <td style="text-align:center;">-</td>
+                        <td style="text-align:center;">N (Frozen)</td>
+                        <td style="text-align:center;">N (Closed)</td>
+                    </tr>
+                    <tr>
+                        <td>Sufficient Balance</td>
+                        <td style="text-align:center;">Y</td>
+                        <td style="text-align:center;">-</td>
+                        <td style="text-align:center;">-</td>
+                        <td style="text-align:center;">-</td>
+                    </tr>
+                    <tr>
+                        <th>Actions</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>Allow Account Opening</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✘</td>
+                        <td style="text-align:center;">-</td>
+                        <td style="text-align:center;">-</td>
+                    </tr>
+                    <tr>
+                        <td>Allow Fund Transfer</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✘</td>
+                        <td style="text-align:center;">✘</td>
+                        <td style="text-align:center;">✘</td>
+                    </tr>
+                    <tr>
+                        <td>Display Balance</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✘</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✔</td>
+                    </tr>
+                    <tr>
+                        <td>Show Error Message</td>
+                        <td style="text-align:center;">✘</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✔</td>
+                        <td style="text-align:center;">✔</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- 2.2 Use Case Diagram -->
+            <p style="margin-top: 20pt;"><b>2.2 Use Case Diagram:</b> The relationships between the actors and the system processes are explained in the roles catalogued below, followed by the Use Case Diagram:</p>
+            
+            <div class="level-3">
+                <p><b>Actors and Roles:</b></p>
+                <ol>
+                    <li><b>Customer:</b> The primary end-user of the banking system. A customer can register, verify their identity via OTP, login, submit KYC documents, open bank accounts, perform fund transfers, manage beneficiaries, create and fund savings goals, view transaction history, access dashboard analytics, update profile settings, and switch display language.</li>
+                    <li><b>Admin:</b> A privileged user with elevated access rights. An admin can review and approve/reject KYC applications, manage account statuses (freeze, close, reactivate), reverse completed transactions with ledger audit trail, monitor system-wide statistics, and manage all user accounts.</li>
+                    <li><b>System (Email Service):</b> An automated actor that sends transactional emails including OTP codes for verification, security alerts for new device logins, account status change notifications, and transaction confirmation receipts.</li>
+                    <li><b>External CDN (ImageKit):</b> An external service actor that stores and serves KYC document images uploaded by customers, providing CDN-backed URLs for document retrieval.</li>
+                    <li><b>Database (MongoDB Atlas):</b> The cloud-hosted database that persistently stores all user data, account information, immutable ledger entries, transaction records, KYC documents, and session data.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    
+
+    <div class="level-1">
+        <div class="level-2">
+            <p><b>Use Case Diagram for YONO Banking System:</b></p>
+
+            <div class="level-3">
+                <svg class="diagram-svg" width="600" height="580" viewBox="0 0 600 580" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="130" y="20" width="340" height="540" rx="15" fill="none" stroke="black" stroke-width="2"/>
+                    <text x="300" y="45" font-family="Times New Roman" font-size="14" text-anchor="middle" font-weight="bold">YONO Banking System</text>
+
+                    <circle cx="50" cy="170" r="12" fill="none" stroke="black" stroke-width="1.5"/>
+                    <line x1="50" y1="182" x2="50" y2="220" stroke="black" stroke-width="1.5"/>
+                    <line x1="30" y1="200" x2="70" y2="200" stroke="black" stroke-width="1.5"/>
+                    <line x1="50" y1="220" x2="35" y2="250" stroke="black" stroke-width="1.5"/>
+                    <line x1="50" y1="220" x2="65" y2="250" stroke="black" stroke-width="1.5"/>
+                    <text x="50" y="268" font-family="Times New Roman" font-size="11" text-anchor="middle">Customer</text>
+
+                    <circle cx="550" cy="170" r="12" fill="none" stroke="black" stroke-width="1.5"/>
+                    <line x1="550" y1="182" x2="550" y2="220" stroke="black" stroke-width="1.5"/>
+                    <line x1="530" y1="200" x2="570" y2="200" stroke="black" stroke-width="1.5"/>
+                    <line x1="550" y1="220" x2="535" y2="250" stroke="black" stroke-width="1.5"/>
+                    <line x1="550" y1="220" x2="565" y2="250" stroke="black" stroke-width="1.5"/>
+                    <text x="550" y="268" font-family="Times New Roman" font-size="11" text-anchor="middle">Admin</text>
+
+                    <ellipse cx="300" cy="75" rx="75" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="300" y="80" font-family="Times New Roman" font-size="10" text-anchor="middle">Register &amp; Verify</text>
+                    <line x1="70" y1="180" x2="225" y2="80" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="120" rx="65" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="125" font-family="Times New Roman" font-size="10" text-anchor="middle">Login / OAuth</text>
+                    <line x1="70" y1="190" x2="185" y2="125" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="165" rx="65" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="170" font-family="Times New Roman" font-size="10" text-anchor="middle">Submit KYC</text>
+                    <line x1="70" y1="195" x2="185" y2="168" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="210" rx="70" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="215" font-family="Times New Roman" font-size="10" text-anchor="middle">Open Account</text>
+                    <line x1="70" y1="200" x2="180" y2="212" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="255" rx="70" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="260" font-family="Times New Roman" font-size="10" text-anchor="middle">Fund Transfer</text>
+                    <line x1="65" y1="210" x2="180" y2="255" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="300" rx="80" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="305" font-family="Times New Roman" font-size="10" text-anchor="middle">Manage Beneficiary</text>
+                    <line x1="65" y1="215" x2="170" y2="300" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="345" rx="70" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="350" font-family="Times New Roman" font-size="10" text-anchor="middle">Savings Goals</text>
+                    <line x1="60" y1="220" x2="180" y2="345" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="390" rx="75" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="395" font-family="Times New Roman" font-size="10" text-anchor="middle">View Dashboard</text>
+                    <line x1="55" y1="225" x2="175" y2="390" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="435" rx="80" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="440" font-family="Times New Roman" font-size="10" text-anchor="middle">Transaction History</text>
+                    <line x1="55" y1="230" x2="170" y2="433" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="370" cy="165" rx="70" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="370" y="170" font-family="Times New Roman" font-size="10" text-anchor="middle">Review KYC</text>
+                    <line x1="530" y1="185" x2="440" y2="170" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="370" cy="210" rx="80" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="370" y="215" font-family="Times New Roman" font-size="10" text-anchor="middle">Manage Accounts</text>
+                    <line x1="530" y1="195" x2="450" y2="213" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="370" cy="255" rx="80" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="370" y="260" font-family="Times New Roman" font-size="10" text-anchor="middle">Reverse Transaction</text>
+                    <line x1="530" y1="200" x2="450" y2="255" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="370" cy="300" rx="75" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="370" y="305" font-family="Times New Roman" font-size="10" text-anchor="middle">View System Stats</text>
+                    <line x1="530" y1="210" x2="445" y2="300" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="250" cy="480" rx="75" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="250" y="485" font-family="Times New Roman" font-size="10" text-anchor="middle">Profile &amp; Settings</text>
+                    <line x1="55" y1="235" x2="175" y2="478" stroke="black" stroke-width="1"/>
+
+                    <ellipse cx="300" cy="530" rx="85" ry="20" fill="#f9f9f9" stroke="black" stroke-width="1"/>
+                    <text x="300" y="535" font-family="Times New Roman" font-size="10" text-anchor="middle">Email Notifications</text>
+
+                    <line x1="320" y1="255" x2="370" y2="255" stroke="black" stroke-width="1" stroke-dasharray="5,3"/>
+                    <line x1="300" y1="95" x2="300" y2="510" stroke="black" stroke-width="0.5" stroke-dasharray="3,3"/>
+                </svg>
+
+                <p class="figure-caption">Fig 2.2 Use Case Diagram for YONO Banking System</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+<div class="page">
+    
+    <div class="level-1">
+        <p><b>2.3 Software Product constraints:</b> The following limiting constraints have been identified for developing the YONO Banking System:</p>
+        
+        <div class="level-2">
+            <ol>
+                <li><b>MongoDB Atlas (Cloud Database):</b> The system relies on MongoDB Atlas as its cloud-hosted database. The free-tier (M0) cluster has limitations on storage (512 MB), connections (500), and does not support certain enterprise features like sharding. For production deployment, a paid tier (M10 or higher) shall be required, which is a constraint for the software.</li>
+                <li><b>ImageKit CDN:</b> The KYC document upload functionality depends on ImageKit's CDN service for storing and serving document images. ImageKit's free plan has a bandwidth limit of 20 GB per month and 20,000 file transformations. For a large-scale deployment, a paid ImageKit plan shall be a constraint for the software.</li>
+                <li><b>Gmail OAuth2 SMTP:</b> The email notification service uses Gmail's OAuth2 SMTP for sending transactional emails (OTPs, alerts, notifications). Gmail imposes a sending limit of 500 emails per day for regular accounts and 2,000 for Google Workspace accounts. For high-volume email delivery, a dedicated email service provider (e.g., SendGrid, AWS SES) would be required.</li>
+                <li><b>JWT Secret Key Management:</b> The security of the entire authentication system depends on the secrecy of the JWT_SECRET environment variable. If compromised, all tokens become vulnerable. A dedicated secrets management service (e.g., AWS Secrets Manager, HashiCorp Vault) would be required for production.</li>
+                <li><b>Google OAuth 2.0 Credentials:</b> The Google Sign-In functionality requires valid OAuth 2.0 credentials (Client ID and Client Secret) from the Google Cloud Console. These credentials are project-specific and must be configured with appropriate redirect URIs. The Google Cloud Console imposes usage quotas on OAuth API calls.</li>
+                <li><b>Node.js Runtime:</b> The backend is built exclusively on Node.js 22.x. This is a single-threaded runtime, which may not be optimal for CPU-intensive operations. For handling heavy computational loads, additional infrastructure (worker threads, load balancers) would be required.</li>
+                <li><b>CORS Policy:</b> The frontend and backend are deployed on different origins (ports 5173 and 3000 respectively). Cross-Origin Resource Sharing (CORS) must be properly configured to allow cookie-based authentication across origins. Incorrect CORS configuration can break the entire authentication flow.</li>
+                <li><b>Browser Compatibility:</b> The frontend uses modern JavaScript features (ES2020+) and React 19. These technologies require modern browsers (Chrome 90+, Firefox 88+, Edge 90+, Safari 15+). Older browsers and Internet Explorer are not supported.</li>
+                <li><b>Internet Connectivity:</b> Since the system relies on MongoDB Atlas (cloud database), ImageKit CDN, Gmail SMTP, and Google OAuth, a stable internet connection is mandatory for the application to function. The system cannot operate in offline mode.</li>
+                <li><b>i18next Plugins:</b> The internationalization feature uses i18next with plugins (react-i18next, i18next-http-backend, i18next-browser-languagedetector) for multi-language support (EN, ES, FR, DE, HI). These plugins need to be properly configured and translation files must be maintained for all supported languages, which adds an ongoing maintenance constraint.</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

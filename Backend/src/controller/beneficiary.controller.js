@@ -7,9 +7,9 @@ const { generateOtp, getOtpHtml, getOtpText } = require('../Utils/otp.utils')
 async function addBeneficiaries(req, res) {
     try {
         const currentLoggedInUserId = req.user._id;
-        const { userId, fullName, nickName, accountId, email } = req.body || {};
+        const { fullName, nickName, accountId } = req.body || {};
 
-        if (!userId || !fullName || !nickName || !accountId || !email) {
+        if (!fullName || !nickName || !accountId) {
             return res.status(400).json({
                 message: "All fields are required",
                 status: "failed"
@@ -54,7 +54,7 @@ async function addBeneficiaries(req, res) {
         }
 
         const otp = generateOtp();
-        const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+        const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         
 
 
@@ -64,13 +64,13 @@ async function addBeneficiaries(req, res) {
             nickName,
             accountId,
             otp,
-            otpExpires,
+            otpExpiresAt,
             isVerified: false
         });
 
         const html = getOtpHtml(otp);
         const text = getOtpText(otp);
-        await sendEmail(email, "Verify Your Beneficiary Setup", text, html);
+        await sendEmail(req.user.email, "Verify Your Beneficiary Setup", text, html);
 
         return res.status(201).json({
             message: "Beneficiary registration initiated. OTP sent to email.",
@@ -107,17 +107,13 @@ async function verifyBeneficiary(req, res) {
                 message: "Beneficiary assignment log not found"
             });
         }
-
-        console.log("Stored OTP:", beneficiary.otp, typeof beneficiary.otp);
-        console.log("Received OTP:", otp, typeof otp);
         if (String(beneficiary.otp) !== String(otp)) {
             return res.status(400).json({
                 message: "Invalid OTP code provided."
             });
         }
 
-
-        if (new Date() > beneficiary.otpExpires) {
+        if (!beneficiary.otpExpiresAt || new Date() > beneficiary.otpExpiresAt) {
             return res.status(400).json({
                 message: "OTP has expired. Please re-initiate beneficiary setup."
             });
@@ -126,7 +122,7 @@ async function verifyBeneficiary(req, res) {
 
         beneficiary.isVerified = true;
         beneficiary.otp = null;
-        beneficiary.otpExpires = null;
+        beneficiary.otpExpiresAt = null;
 
         await beneficiary.save();
 
@@ -166,8 +162,48 @@ async function getBeneficiaries(req, res) {
     }
 }
 
+async function deleteBeneficiary(req, res) {
+    try {
+        const { beneficiaryId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(beneficiaryId)) {
+            return res.status(400).json({
+                message: "Invalid beneficiary ID",
+                status: "failed"
+            });
+        }
+
+        const deletedBeneficiary = await beneficiaryModel.findOneAndDelete({
+            _id: beneficiaryId,
+            userId: req.user._id
+        });
+
+        if (!deletedBeneficiary) {
+            return res.status(404).json({
+                message: "Beneficiary not found",
+                status: "failed"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Beneficiary removed successfully",
+            status: "success",
+            data: {
+                beneficiaryId: deletedBeneficiary._id
+            }
+        });
+    } catch (error) {
+        console.error("Error deleting beneficiary:", error);
+        return res.status(500).json({
+            message: "Something went wrong while removing the beneficiary.",
+            status: "error"
+        });
+    }
+}
+
 module.exports = {
     addBeneficiaries,
     verifyBeneficiary,
-    getBeneficiaries
+    getBeneficiaries,
+    deleteBeneficiary
 };

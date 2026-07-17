@@ -16,6 +16,7 @@ import AdminPanel from "./AdminPanel";
 import ProfileView from "./ProfileView";
 import SettingsView from "./SettingsView";
 import GoalsView from "./GoalsView";
+import BeneficiariesView from "./BeneficiariesView";
 
 import {
   SidebarInset,
@@ -80,6 +81,14 @@ function mergeDashboard(payload) {
   };
 }
 
+function getBeneficiaryAccountId(beneficiary) {
+  if (beneficiary?.accountId && typeof beneficiary.accountId === "object") {
+    return beneficiary.accountId._id || "";
+  }
+
+  return beneficiary?.accountId || "";
+}
+
 function DashboardSkeleton() {
   return (
     <div className="space-y-5">
@@ -127,7 +136,7 @@ const Home = () => {
         if (parsed.darkMode) {
           return localStorage.getItem("yono_theme") === "dark";
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -152,7 +161,7 @@ const Home = () => {
           if (parsed.darkMode) {
             localStorage.setItem("yono_theme", next ? "dark" : "light");
           }
-        } catch (e) {
+        } catch {
           // ignore
         }
       }
@@ -171,6 +180,7 @@ const Home = () => {
   const [sendLoading, setSendLoading] = useState(false);
   const [sendError, setSendError] = useState("");
   const [sendSuccess, setSendSuccess] = useState("");
+  const [savedBeneficiaries, setSavedBeneficiaries] = useState([]);
 
   // Fetch user accounts for the FromAccount dropdown
   const fetchAccounts = useCallback(async () => {
@@ -185,6 +195,18 @@ const Home = () => {
       }
     } catch {
       // Silently fail — accounts will show empty
+    }
+  }, []);
+
+  const fetchBeneficiaries = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/beneficiary/get-beneficiary`,
+        { withCredentials: true },
+      );
+      setSavedBeneficiaries(response.data?.data?.beneficiaries || []);
+    } catch {
+      setSavedBeneficiaries([]);
     }
   }, []);
 
@@ -222,6 +244,7 @@ const Home = () => {
     setSendSuccess("");
     setShowSendModal(true);
     fetchAccounts();
+    fetchBeneficiaries();
   };
 
   const fetchDashboard = useCallback(async () => {
@@ -309,6 +332,8 @@ const Home = () => {
         return <SettingsView />;
       case "goals":
         return <GoalsView />;
+      case "beneficiaries":
+        return <BeneficiariesView />;
       default:
         return (
           <>
@@ -448,8 +473,34 @@ const Home = () => {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">To Account ID</label>
+                {savedBeneficiaries.length > 0 && (
+                  <>
+                    <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="saved-beneficiary">
+                      Saved Beneficiary
+                    </label>
+                    <select
+                      className="mb-3 h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                      id="saved-beneficiary"
+                      onChange={(e) => setSendForm((prev) => ({ ...prev, toAccount: e.target.value }))}
+                      value={savedBeneficiaries.some((beneficiary) => getBeneficiaryAccountId(beneficiary) === sendForm.toAccount) ? sendForm.toAccount : ""}
+                    >
+                      <option value="">Choose a saved beneficiary</option>
+                      {savedBeneficiaries.map((beneficiary) => {
+                        const accountId = getBeneficiaryAccountId(beneficiary);
+                        return (
+                          <option key={beneficiary._id} value={accountId}>
+                            {beneficiary.nickName || beneficiary.fullName} — A/C {String(accountId).slice(-6).toUpperCase()}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </>
+                )}
+                <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="recipient-account-id">
+                  {savedBeneficiaries.length ? "Or enter an Account ID" : "To Account ID"}
+                </label>
                 <input
+                  id="recipient-account-id"
                   type="text"
                   value={sendForm.toAccount}
                   onChange={(e) => setSendForm((prev) => ({ ...prev, toAccount: e.target.value }))}

@@ -34,7 +34,6 @@ async function authmiddleware(req, res, next) {
     }
 }
 
-// Rest parameter (...) bundles all specified roles into an array.
 function requireRole(...roles) {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
@@ -42,7 +41,6 @@ function requireRole(...roles) {
                 message: `Forbidden access, required role: ${roles.join(' or ')}`
             })
         }
-
         return next()
     }
 }

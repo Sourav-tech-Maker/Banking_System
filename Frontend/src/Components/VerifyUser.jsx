@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OtpInput from "./tailgrids/core/otp-input";
+import { AUTH_API_BASE_URL } from "../config/api";
 
 export default function VerifyOtp() {
   const [otp, setOtp] = useState("");
@@ -10,12 +11,11 @@ export default function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
     const email = location.state?.email;
-    console.log(email);
 
   const handleVerify = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/verify-otp",
+      `${AUTH_API_BASE_URL}/api/auth/verify-otp`,
       {
         email,
         otp,

@@ -23,6 +23,7 @@ import {
   Globe
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { AUTH_API_BASE_URL } from "../config/api";
 
 const RegistrationPage = () => {
   const { t, i18n } = useTranslation();
@@ -123,7 +124,7 @@ const RegistrationPage = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        `${AUTH_API_BASE_URL}/api/auth/register`,
         {
           username: formData.fullName, // Mapping fullName to username expected by API
           email: formData.email,

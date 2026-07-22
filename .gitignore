@@ -141,3 +141,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# .NET build output and user-local state
+**/bin/
+**/obj/
+*.user
+*.suo

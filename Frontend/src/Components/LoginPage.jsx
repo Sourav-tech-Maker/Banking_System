@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ThreeCircles } from "react-loader-spinner";
+import { AUTH_API_BASE_URL } from "../config/api";
 
 const LoginPage = () => {
   // we fetch t (used to translate words) and the i18n object (used to change languages)
@@ -62,7 +63,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        `${AUTH_API_BASE_URL}/api/auth/login`,
         formData,
         {
           withCredentials: true
